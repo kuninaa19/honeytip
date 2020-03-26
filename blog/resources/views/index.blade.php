@@ -14,10 +14,10 @@ HI {{$info}}
 {{ $user->email }}
 @endforeach
 
-<form action="/info" method="POST">
+<form action="info" method="POST">
     {{ csrf_field() }}
     <input type="text" name="email" placeholder="이메일">
-    <input type="text" name="name" placeholder="이름">
+    <input type="text" name="id" placeholder="이름">
     <input type="text" name="sns_type" placeholder="sns">
     <input type="submit">
 </form>
