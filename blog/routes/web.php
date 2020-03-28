@@ -2,55 +2,29 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', 'userController@index');
+//인덱스
+Route::get('/', 'exampleController@index');
+// Ajax 연습페이지
+Route::get('/example', 'exampleController@example');
+Route::get('/example/{id}/{ee}', 'exampleController@ix');
 
-Route::get('/index', 'userController@index');
-Route::get('/example', 'userController@example');
-
-Route::get('user', function () {
-    return '일반 값전달';
-});
-
-Route::get('user/{id?}', function ($id= 'null') {
-    return '리소스명칭'.$id;
-});
+// 관리자 로그인
 Route::middleware(['cors'])->group(function(){
     Route::get('/csrf_token', function(){
         return csrf_token();
     });
-    Route::post('login/auth','userController@login');
+    Route::post('login','AdminController@login');
 });
 
+//글 관련 Route
+Route::resource('posts', 'PostsController',['except' => ['edit','index']])->middleware('cors');
 
-Route::post('info','userController@aa');
-Route::get('exa/{info}','userController@name');
+//글 상세 내용페이지
+Route::get('posts/{id}/{iaa}', 'PostsController@post_list')->middleware('cors');
 
-//인자 한개
-//Route::get('/', function () {
-//    $greeting = 'Hello';
-//
-//    return view('index')->with('greeting', $greeting);
-//});
 
-//Route::get('/', function () {
-//    return view('index')->with([
-//        'greeting' => 'Good morning ^^/',
-//        'name'     => 'Appkr'
-//    ]);
-//});
-//
-//Route::get('/', function () {
-//    return view('index', [
-//        'greeting' => 'Ola~',
-//        'name'     => 'Laravelians',
-//        'items'    => ['Apple','Banana']
-//    ]);
-//});
+// 댓글 관련 Route
+Route::resource('reply', 'ReplysController')->middleware('cors');
 
-//Route::get('/', function () {
-//    $view = view('index');
-//    $view->greeting = "Hey~ What's up";
-//    $view->name = 'everyone';
-//    $view->items = ['Apple','Banana'];
-//    return $view;
-//});
+
+
