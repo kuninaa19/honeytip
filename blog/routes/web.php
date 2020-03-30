@@ -6,7 +6,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', 'exampleController@index');
 // Ajax 연습페이지
 Route::get('/example', 'exampleController@example');
-Route::get('/example/{id}/{ee}', 'exampleController@ix');
+Route::post('/idstore', 'exampleController@store');
+Route::get('/page', 'exampleController@page');
 
 // 관리자 로그인
 Route::middleware(['cors'])->group(function(){
@@ -17,11 +18,13 @@ Route::middleware(['cors'])->group(function(){
 });
 
 //글 관련 Route
-Route::resource('posts', 'PostsController',['except' => ['edit','index']])->middleware('cors');
+Route::resource('posts', 'PostsController',['except' => ['index','create']])->middleware('cors');
+
+//글작성 이미지저장
+Route::post('posts/image', 'PostsController@imageStore')->middleware('cors');
 
 //글 상세 내용페이지
-Route::get('posts/{id}/{iaa}', 'PostsController@post_list')->middleware('cors');
-
+Route::get('posts/{category}/{num}', 'PostsController@content')->middleware('cors');
 
 // 댓글 관련 Route
 Route::resource('reply', 'ReplysController')->middleware('cors');
