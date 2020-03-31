@@ -1,16 +1,19 @@
 <?php
-// imagestore() 글생성 전 이미지 저장
 // store() 글 생성
 // update() 글 수정
 // destroy() 글 삭제
-// show () 글 리스트 목록 가져오기(카테고리별)
-// post_list() 글 상세내용 페이지
+// show () 글 상세페이지
+// edit () 글 수정하기위한 작성된 글 내용가져오기
+// imagestore() 글생성 전 이미지 저장
+// category_list() 카테고리별 글 리스트 목록
+// viewUp() 조회수 증가
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\File;
+use Illuminate\Pagination\Paginator;
 
 class PostsController extends Controller
 {
@@ -46,7 +49,7 @@ class PostsController extends Controller
     //수정하려는 글에 대한 정보 전달
     public function edit($id)
     {
-        $post = DB::table('posts')->where(['index_posts', $id])->first();
+        $post = DB::table('posts')->where('index_posts', $id)->first();
 
         if(empty($post->index_posts)){
             $data = array(
@@ -89,60 +92,28 @@ class PostsController extends Controller
     //글 삭제(관리자)
     public function destroy($id)
     {
-        DB::table('posts')->where('index_posts', $id)->delete();
-
         $confirm = DB::table('posts')->where('index_posts',$id)->first();
 
-        //DB검색해서 가져온 값이 비었는지 확인 else 삭제 안됨
+        //DB검색해서 가져온 값이 비었다. 이미 삭제됨
         if(empty($confirm->index_posts)){
-            $data = array(
-                'key'=>true
-            );
-        }
-        else{
             $data = array(
                 'key'=>false
             );
+            return json_encode($data,JSON_UNESCAPED_UNICODE);
         }
+
+        DB::table('posts')->where('index_posts', $id)->delete();
+
+        $data = array(
+            'key'=>true
+        );
         return json_encode($data,JSON_UNESCAPED_UNICODE);
     }
 
-    //글 리스트 목록 (페이징)
+    //글 상세 내용페이지
     public function show($id)
     {
-        $admin = DB::table('posts')->where(['category', $id])->get();
-
-        $users = DB::table('users')->where('category', $id)->paginate(15);
-
-        $users = User::where('votes', '>', 100)->paginate(15);
-
-        return view('user.index', ['users' => $users]);
-
-
-        if(empty($confirm->index_posts)){
-            $data = array(
-                'key'=>false
-            );
-//객체를 문자열형태로 만들기
-            $value = json_encode($data);
-            return $value;
-
-//          return response()->json($data);
-        }
-        else{
-            $key = true;
-
-            $data = array(
-                'key'=>$key,
-            );
-            return json_encode($data,JSON_UNESCAPED_UNICODE);
-//            return response()->json($data);
-        }
-    }
-
-    //글 상세 내용페이지
-    public function  content($category,$num){
-        $post = DB::table('posts')->where([['category', $category], ['index_posts', $num]])->first();
+        $post = DB::table('posts')->where( 'index_posts', $id)->first();
 
         $data = array(
             'key'=>false
@@ -163,6 +134,29 @@ class PostsController extends Controller
 
         return json_encode($data,JSON_UNESCAPED_UNICODE);
 //      return response()->json($data);
+
+    }
+
+    //글 리스트 목록 (페이징)
+    public function category_list($category,$num){
+        $content = DB::table('posts')->where('category', $category)
+            ->orderBy('index_posts', 'desc')->offset(($num-1)*6)->limit(6)->get();
+
+        ;
+//        return $content[0];
+//        return json_encode($content[0]->date);
+        if (empty($content[0])) {
+            $data = array(
+                'key' => false
+            );
+        } else {
+            $data = array(
+                'key' => true,
+                'contents' => $content
+            );
+        }
+        return json_encode($data,JSON_UNESCAPED_UNICODE);
+//      return response()->json($data);
     }
 
     //이미지 저장후 주소 전달
@@ -172,9 +166,8 @@ class PostsController extends Controller
         return $image_path;
     }
 
-    //글 상세내용 페이지 (view +1 증가)
-    public function post_list($category,$num){
-
+    //글 조회수 +1 증가
+    public function viewUp($category,$num){
         return  $category.$num;
     }
 }
