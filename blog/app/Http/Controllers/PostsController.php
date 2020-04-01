@@ -1,12 +1,12 @@
 <?php
-// store() 글 생성
-// update() 글 수정
-// destroy() 글 삭제
-// show () 글 상세페이지
-// edit () 글 수정하기위한 작성된 글 내용가져오기
-// imagestore() 글생성 전 이미지 저장
-// category_list() 카테고리별 글 리스트 목록
-// viewUp() 조회수 증가
+// 1. store() 글 생성
+// 2. show () 글 상세페이지
+// 3. edit () 글 수정하기위한 작성된 글 내용가져오기
+// 4. update() 글 수정
+// 5. destroy() 글 삭제
+// 6. category_list() 카테고리별 글 리스트 목록
+// 7. imagestore() 글생성 전 이미지 저장
+// 8. viewUp() 조회수 증가
 
 namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
@@ -17,6 +17,11 @@ use Illuminate\Pagination\Paginator;
 
 class PostsController extends Controller
 {
+//    public function __construct()
+//    {
+//        $this->middleware('cors');
+//    }
+
     //글 DB저장(관리자)
     public function store(Request $request)
     {
@@ -44,6 +49,32 @@ class PostsController extends Controller
             );
         }
         return json_encode($data,JSON_UNESCAPED_UNICODE);
+    }
+
+    //글 상세 내용페이지
+    public function show($id)
+    {
+        $post = DB::table('posts')->where( 'index_posts', $id)->first();
+
+        $data = array(
+            'key'=>false
+        );
+
+        //DB검색해서 가져온 값이 존재하는지 확인
+        if(isset($post->index_posts)){
+            $data = array(
+                'key'=>true,
+                'postInfo'=> array (
+                    'title'=>$post->title,
+                    'contents'=>$post->contents,
+                    'date'=>$post->date,
+                    'viewCounts'=>$post->view_count
+                )
+            );
+        }
+
+        return json_encode($data,JSON_UNESCAPED_UNICODE);
+//     return response()->json($data);
     }
 
     //수정하려는 글에 대한 정보 전달
@@ -108,33 +139,6 @@ class PostsController extends Controller
             'key'=>true
         );
         return json_encode($data,JSON_UNESCAPED_UNICODE);
-    }
-
-    //글 상세 내용페이지
-    public function show($id)
-    {
-        $post = DB::table('posts')->where( 'index_posts', $id)->first();
-
-        $data = array(
-            'key'=>false
-        );
-
-        //DB검색해서 가져온 값이 비었는지 확인
-        if(isset($post->index_posts)){
-            $data = array(
-                'key'=>true,
-                'postInfo'=> array (
-                    'title'=>$post->title,
-                    'contents'=>$post->contents,
-                    'date'=>$post->date,
-                    'viewCounts'=>$post->view_count
-                )
-            );
-        }
-
-        return json_encode($data,JSON_UNESCAPED_UNICODE);
-//      return response()->json($data);
-
     }
 
     //글 리스트 목록 (페이징)
