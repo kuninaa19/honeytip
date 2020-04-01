@@ -31,8 +31,18 @@ Route::middleware(['cors'])->group(function(){
     Route::get('posts/{num}', 'PostsController@viewUp');
 });
 
-// 댓글 관련 Route
-Route::resource('reply', 'ReplysController')->middleware('cors');
+Route::middleware(['cors'])->group(function(){
+    // 댓글 관련 Route
+    Route::resource('comments', 'commentsController',['except' => ['index','create','show']]);
 
+    Route::get('comments/{postNum}/{page}', 'commentsController@comments_list');
 
+});
 
+Route::middleware(['cors'])->group(function(){
+    // 대댓글 관련 Route
+    Route::resource('reply', 'ReplyController',['except' => ['index','create']]);
+
+    Route::get('reply/{category}/{num}', 'ReplyController@kae');
+
+});
