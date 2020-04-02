@@ -1,17 +1,42 @@
 <?php
-// 1. store() 댓글 DB저장
-// 2. edit () 댓글 수정하기위한 작성된 댓글 내용가져오기
-// 3. update() 댓글 수정
-// 4. destroy() 댓글 삭제
-// 5. comments_list() 댓글 리스트 목록 (페이징)
+// 1. comments_list() 댓글 리스트 목록 (페이징)
+// 2. store() 댓글 DB저장
+// 3. edit () 댓글 수정하기위한 작성된 댓글 내용가져오기
+// 4. update() 댓글 수정
+// 5. destroy() 댓글 삭제
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Article;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CommentsController extends Controller
 {
+    // 댓글 리스트 목록 (페이징)
+    // 파라미터 글 번호 , 댓글 페이징 번호
+    public function comments_list($postNum,$page)
+    {
+        $content = DB::table('comments')->where('postNum', $postNum)
+            ->orderBy('indexComments', 'desc')->offset(($page-1)*6)->limit(6)->get();
+
+        ;
+//        return $content[0];
+//        return json_encode($content[0]->date);
+        if (empty($content[0])) {
+            $data = array(
+                'key' => false
+            );
+        } else {
+            $data = array(
+                'key' => true,
+                'contents' => $content
+            );
+        }
+        return json_encode($data,JSON_UNESCAPED_UNICODE);
+//      return response()->json($data);
+    }
+
     //댓글 DB저장하기
     public function store(Request $request)
     {
@@ -90,29 +115,5 @@ class CommentsController extends Controller
             'key'=>true
         );
         return json_encode($data,JSON_UNESCAPED_UNICODE);
-    }
-
-    // 댓글 리스트 목록 (페이징)
-    // 파라미터 글 번호 , 댓글 페이징 번호
-    public function comments_list($postNum,$page)
-    {
-        $content = DB::table('comments')->where('postNum', $postNum)
-            ->orderBy('indexComments', 'desc')->offset(($page-1)*6)->limit(6)->get();
-
-        ;
-//        return $content[0];
-//        return json_encode($content[0]->date);
-        if (empty($content[0])) {
-            $data = array(
-                'key' => false
-            );
-        } else {
-            $data = array(
-                'key' => true,
-                'contents' => $content
-            );
-        }
-        return json_encode($data,JSON_UNESCAPED_UNICODE);
-//      return response()->json($data);
     }
 }

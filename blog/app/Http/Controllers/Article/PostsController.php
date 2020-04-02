@@ -1,19 +1,20 @@
 <?php
-// 1. store() 글 생성
-// 2. show () 글 상세페이지
-// 3. edit () 글 수정하기위한 작성된 글 내용가져오기
-// 4. update() 글 수정
-// 5. destroy() 글 삭제
-// 6. category_list() 카테고리별 글 리스트 목록
-// 7. imagestore() 글생성 전 이미지 저장
-// 8. viewUp() 조회수 증가
+// 1. category_list() 카테고리별 글 리스트 목록
+// 2. imagestore() 글생성 전 이미지 저장
+// 3. viewUp() 조회수 증가
+// 4. store() 글 생성
+// 5. show () 글 상세페이지
+// 6. edit () 글 수정하기위한 작성된 글 내용가져오기
+// 7. update() 글 수정
+// 8. destroy() 글 삭제
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Article;
+
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\File;
-use Illuminate\Pagination\Paginator;
 
 class PostsController extends Controller
 {
@@ -21,6 +22,40 @@ class PostsController extends Controller
 //    {
 //        $this->middleware('cors');
 //    }
+
+//글 리스트 목록 (페이징)
+    public function category_list($category,$num){
+        $content = DB::table('posts')->where('category', $category)
+            ->orderBy('indexPosts', 'desc')->offset(($num-1)*6)->limit(6)->get();
+
+        ;
+//        return $content[0];
+//        return json_encode($content[0]->date);
+        if (empty($content[0])) {
+            $data = array(
+                'key' => false
+            );
+        } else {
+            $data = array(
+                'key' => true,
+                'contents' => $content
+            );
+        }
+        return json_encode($data,JSON_UNESCAPED_UNICODE);
+//      return response()->json($data);
+    }
+
+    //이미지 저장후 주소 전달
+    public function imageStore(Request $request){
+        $image_path = $request->file('fileToUpload')->store('images','public');
+
+        return $image_path;
+    }
+
+    //글 조회수 +1 증가
+    public function viewUp($category,$num){
+        return  $category.$num;
+    }
 
     //글 DB저장(관리자)
     public function store(Request $request)
@@ -139,39 +174,5 @@ class PostsController extends Controller
             'key'=>true
         );
         return json_encode($data,JSON_UNESCAPED_UNICODE);
-    }
-
-    //글 리스트 목록 (페이징)
-    public function category_list($category,$num){
-        $content = DB::table('posts')->where('category', $category)
-            ->orderBy('indexPosts', 'desc')->offset(($num-1)*6)->limit(6)->get();
-
-        ;
-//        return $content[0];
-//        return json_encode($content[0]->date);
-        if (empty($content[0])) {
-            $data = array(
-                'key' => false
-            );
-        } else {
-            $data = array(
-                'key' => true,
-                'contents' => $content
-            );
-        }
-        return json_encode($data,JSON_UNESCAPED_UNICODE);
-//      return response()->json($data);
-    }
-
-    //이미지 저장후 주소 전달
-    public function imageStore(Request $request){
-        $image_path = $request->file('fileToUpload')->store('images','public');
-
-        return $image_path;
-    }
-
-    //글 조회수 +1 증가
-    public function viewUp($category,$num){
-        return  $category.$num;
     }
 }
