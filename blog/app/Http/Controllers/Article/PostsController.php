@@ -28,9 +28,6 @@ class PostsController extends Controller
         $content = DB::table('posts')->where('category', $category)
             ->orderBy('indexPosts', 'desc')->offset(($num-1)*6)->limit(6)->get();
 
-        ;
-//        return $content[0];
-//        return json_encode($content[0]->date);
         if (empty($content[0])) {
             $data = array(
                 'key' => false
@@ -68,7 +65,7 @@ class PostsController extends Controller
         $adminId = $request->input('adminId');
 
         $store = DB::table('posts')->insertGetId(['adminId' => $adminId, 'image' => 'https://honeytip.p-e.kr/storage/'.$image,
-            'contents' => $contents, 'sub_title' => $subTitle, 'category'=> $category,'title'=>$title,'date'=>NOW()]);
+            'contents' => $contents, 'subTitle' => $subTitle, 'category'=> $category,'title'=>$title,'date'=>NOW()]);
 
         $confirm = DB::table('posts')->where('indexPosts',$store)->first();
 
@@ -147,7 +144,7 @@ class PostsController extends Controller
         $image = $request->input('image');
 
         DB::table('posts')->where('indexPosts', $id)->update(['image' => 'https://honeytip.p-e.kr/storage/'.$image,
-            'contents' => $contents, 'sub_title' => $subTitle, 'category'=> $category,'title'=>$title]);
+            'contents' => $contents, 'subTitle' => $subTitle, 'category'=> $category,'title'=>$title]);
 
         $data = array(
             'key'=>true
