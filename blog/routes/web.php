@@ -33,9 +33,9 @@ Route::middleware(['cors'])->group(function(){
 
 Route::middleware(['cors'])->group(function(){
     // 댓글 관련 Route
-    Route::resource('comments', 'commentsController',['except' => ['index','create','show']]);
+    Route::resource('comments', 'CommentsController',['except' => ['index','create','show']]);
 
-    Route::get('comments/{postNum}/{page}', 'commentsController@comments_list');
+    Route::get('comments/{postNum}/{page}', 'CommentsController@comments_list');
 
 });
 
