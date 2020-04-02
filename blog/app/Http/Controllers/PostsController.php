@@ -38,7 +38,7 @@ class PostsController extends Controller
         $confirm = DB::table('posts')->where('indexPosts',$store)->first();
 
         //DB검색해서 가져온 값이 비었는지 확인
-        if(empty($confirm->index_posts)){
+        if(empty($confirm->indexPosts)){
             $data = array(
                 'key'=>false
             );
@@ -61,7 +61,7 @@ class PostsController extends Controller
         );
 
         //DB검색해서 가져온 값이 존재하는지 확인
-        if(isset($post->index_posts)){
+        if(isset($post->indexPosts)){
             $data = array(
                 'key'=>true,
                 'postInfo'=> array (
@@ -82,7 +82,7 @@ class PostsController extends Controller
     {
         $post = DB::table('posts')->where('indexPosts', $id)->first();
 
-        if(empty($post->index_posts)){
+        if(empty($post->indexPosts)){
             $data = array(
                 'key'=>false
             );
@@ -126,7 +126,7 @@ class PostsController extends Controller
         $confirm = DB::table('posts')->where('indexPosts',$id)->first();
 
         //DB검색해서 가져온 값이 비었다. 이미 삭제됨
-        if(empty($confirm->index_posts)){
+        if(empty($confirm->indexPosts)){
             $data = array(
                 'key'=>false
             );
