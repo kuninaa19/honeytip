@@ -32,10 +32,10 @@ class PostsController extends Controller
         $image = $request->input('image');
         $adminId = $request->input('adminId');
 
-        $store = DB::table('posts')->insertGetId(['admin_id' => $adminId, 'image' => 'https://honeytip.p-e.kr/storage/'.$image,
+        $store = DB::table('posts')->insertGetId(['adminId' => $adminId, 'image' => 'https://honeytip.p-e.kr/storage/'.$image,
             'contents' => $contents, 'sub_title' => $subTitle, 'category'=> $category,'title'=>$title,'date'=>NOW()]);
 
-        $confirm = DB::table('posts')->where('index_posts',$store)->first();
+        $confirm = DB::table('posts')->where('indexPosts',$store)->first();
 
         //DB검색해서 가져온 값이 비었는지 확인
         if(empty($confirm->index_posts)){
@@ -54,7 +54,7 @@ class PostsController extends Controller
     //글 상세 내용페이지
     public function show($id)
     {
-        $post = DB::table('posts')->where( 'index_posts', $id)->first();
+        $post = DB::table('posts')->where( 'indexPosts', $id)->first();
 
         $data = array(
             'key'=>false
@@ -68,7 +68,7 @@ class PostsController extends Controller
                     'title'=>$post->title,
                     'contents'=>$post->contents,
                     'date'=>$post->date,
-                    'viewCounts'=>$post->view_count
+                    'viewCounts'=>$post->viewCount
                 )
             );
         }
@@ -80,7 +80,7 @@ class PostsController extends Controller
     //수정하려는 글에 대한 정보 전달
     public function edit($id)
     {
-        $post = DB::table('posts')->where('index_posts', $id)->first();
+        $post = DB::table('posts')->where('indexPosts', $id)->first();
 
         if(empty($post->index_posts)){
             $data = array(
@@ -95,7 +95,7 @@ class PostsController extends Controller
                     'category'=>$post->category,
                     'contents'=>$post->contents,
                     'image'=>$post->image,
-                    'subTitle'=>$post->sub_title
+                    'subTitle'=>$post->subTitle
                 )
             );
         }
@@ -111,7 +111,7 @@ class PostsController extends Controller
         $contents = $request->input('contents');
         $image = $request->input('image');
 
-        DB::table('posts')->where('index_posts', $id)->update(['image' => 'https://honeytip.p-e.kr/storage/'.$image,
+        DB::table('posts')->where('indexPosts', $id)->update(['image' => 'https://honeytip.p-e.kr/storage/'.$image,
             'contents' => $contents, 'sub_title' => $subTitle, 'category'=> $category,'title'=>$title]);
 
         $data = array(
@@ -123,7 +123,7 @@ class PostsController extends Controller
     //글 삭제(관리자)
     public function destroy($id)
     {
-        $confirm = DB::table('posts')->where('index_posts',$id)->first();
+        $confirm = DB::table('posts')->where('indexPosts',$id)->first();
 
         //DB검색해서 가져온 값이 비었다. 이미 삭제됨
         if(empty($confirm->index_posts)){
@@ -133,7 +133,7 @@ class PostsController extends Controller
             return json_encode($data,JSON_UNESCAPED_UNICODE);
         }
 
-        DB::table('posts')->where('index_posts', $id)->delete();
+        DB::table('posts')->where('indexPosts', $id)->delete();
 
         $data = array(
             'key'=>true
@@ -144,7 +144,7 @@ class PostsController extends Controller
     //글 리스트 목록 (페이징)
     public function category_list($category,$num){
         $content = DB::table('posts')->where('category', $category)
-            ->orderBy('index_posts', 'desc')->offset(($num-1)*6)->limit(6)->get();
+            ->orderBy('indexPosts', 'desc')->offset(($num-1)*6)->limit(6)->get();
 
         ;
 //        return $content[0];
