@@ -2,8 +2,9 @@
 // 1. storeSecret() 관리자 아이디 생성
 // 2. login () 관리자 로그인인증
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Auth;
 
+use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Crypt;
