@@ -2,6 +2,7 @@
 // 1. category_list() 카테고리별 글 리스트 목록
 // 2. imagestore() 글생성 전 이미지 저장
 // 3. viewUp() 조회수 증가
+// 4 index() 메인페이지 최신 글 6개 보내주기
 // 4. store() 글 생성
 // 5. show () 글 상세페이지
 // 6. edit () 글 수정하기위한 작성된 글 내용가져오기
@@ -52,6 +53,27 @@ class PostsController extends Controller
     //글 조회수 +1 증가
     public function viewUp($category,$num){
         return  $category.$num;
+    }
+
+    //메인페이지 최신 글 6개 보내주기
+    public function index()
+    {
+        $post = DB::table('posts')->orderBy('indexPosts', 'desc')->limit(6)->get();
+
+        $data = array(
+            'key'=>false
+        );
+
+        //DB검색해서 가져온 값이 존재하는지 확인
+//        if(isset($post->indexPosts)){
+            $data = array(
+                'key'=>true,
+                'postInfo'=> $post
+            );
+//        }
+
+        return json_encode($data,JSON_UNESCAPED_UNICODE);
+//     return response()->json($data);
     }
 
     //글 DB저장(관리자)
