@@ -14,6 +14,7 @@ Route::middleware(['cors'])->group(function(){
         return csrf_token();
     });
     Route::post('login','AdminController@login');
+    Route::post('make_id','AdminController@storeSecret');
 });
 
 
