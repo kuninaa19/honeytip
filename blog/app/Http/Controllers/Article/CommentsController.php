@@ -58,7 +58,8 @@ class CommentsController extends Controller
         }
         else {
             $data = array(
-                'key'=>true
+                'key'=>true,
+                'commentIndex'=>$store
             );
         }
         return json_encode($data,JSON_UNESCAPED_UNICODE);
