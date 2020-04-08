@@ -1,7 +1,7 @@
 <?php
 // 1. redirectToProvider() 구글에 로그인요청
 // 2. handleProviderCallback () 로그인한 후에 이미 만들어진 아이디인지 확인후 처리
-
+// 3. findOrCreateUser() 아이디 존재하지않으면 새로 생성 하는 메서드
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -22,52 +22,57 @@ class LoginController extends Controller
     public function handleProviderCallback()
     {
         //아이디 생성 그런느낌인거같음.
-//        $user = Socialite::driver('google')->stateless()->user();
-        $user = Socialite::driver('google')->user();
+        $socialUser = Socialite::driver('google')->stateless()->user();
+//        $user = Socialite::driver('google')->user();
 
 //        dd($user);
+        $user = $this->findOrCreateUser($socialUser);
 
-        $existUser = User::where('uid',$user->id)->first();
+//      로그인
+        Auth::login($user, false);
+
+        $userCredentials = ['headers' =>[
+            'Authorization' => 'Bearer '.$socialUser->token,
+            'expiresIn' => $socialUser->expiresIn,
+            'Accept' => 'application/json',
+//            'refreshToken' => $socialUser->refreshToken,
+        ]
+        ];
+
+        // dd($user);
+//        Auth::guard('admin')->login($user);
+                $info =  json_encode($userCredentials,JSON_UNESCAPED_UNICODE);
+
+//        return redirect()->to('/',$status = 302,$headers = [$info]);
+        return redirect()->to(env('LOGIN_ENDPOINT'));
+    }
+
+    // 아이디 존재하지않으면 새로 생성 하는 메서드
+    public function findOrCreateUser($socialUser){
+        $existUser = User::where('uid',$socialUser->id)->first();
         if($existUser){
-            if($user->refreshToken===null){
-                 User::where('uid', $existUser->uid)
-                    ->update(['name' => $user->getName()],['avatar' =>$user->getAvatar()]);
+            if($socialUser->refreshToken===null){
+                User::where('uid', $existUser->uid)
+                    ->update(['name' => $socialUser->getName()],['avatar' =>$socialUser->getAvatar()]);
             }
             else{
                 User::where('uid', $existUser->uid)
-                    ->update(['name' => $user->getName()],['avatar' =>$user->getAvatar()],['refresh_token'=> $user->refreshToken]);
+                    ->update(['name' => $socialUser->getName()],['avatar' =>$socialUser->getAvatar()],['refresh_token'=> $socialUser->refreshToken]);
             }
-//            $compareUser->save();
             // 그전꺼로 로그인 되어있는 정보로 로그인해야함
-            auth()->login($existUser, false);
+            return $existUser;
         }
         else{
             $user = User::firstOrCreate([
-                'name'  => $user->getName(),
-                'uid'  => $user->getId(),
-                'email' => $user->getEmail(),
-                'avatar' =>$user->getAvatar(),
+                'name'  => $socialUser->getName(),
+                'uid'  => $socialUser->getId(),
+                'email' => $socialUser->getEmail(),
+                'avatar' =>$socialUser->getAvatar(),
                 'sns_type'=>'google',
-                'refresh_token'=> $user->refreshToken
+                'refresh_token'=> $socialUser->refreshToken
 //            'token'=>$user->token,
             ]);
-            auth()->login($user, false);
+            return $user;
         }
-
-
-        $userCredentials = [
-            'token' => $user->token,
-            'refreshToken' => $user->refreshToken,
-            'expiresIn' => $user->expiresIn,
-        ];
-
-//        dd($userCredentials);
-//        dd($user);
-//        Auth::guard('admin')->login($user);
-
-return        auth()->user();
-        return redirect()->to('/');
-
-//        return redirect()->to(env('LOGIN_ENDPOINT'));
     }
 }
