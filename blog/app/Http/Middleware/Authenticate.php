@@ -14,7 +14,9 @@ class Authenticate extends Middleware
      */
     protected function redirectTo($request)
     {
+        // 로그인 안되어있다면 /auth/login 이름의 라우터 실행
         if (! $request->expectsJson()) {
+//            return url('https://honeytip.kro.kr');
             return route('login');
         }
     }
