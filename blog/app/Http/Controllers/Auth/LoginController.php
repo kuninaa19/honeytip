@@ -11,7 +11,6 @@ use App\User;
 
 class LoginController extends Controller
 {
-
     // 1. redirectToProvider() 구글에 로그인요청
     public function redirectToProvider()
     {
@@ -23,18 +22,19 @@ class LoginController extends Controller
     public function handleProviderCallback()
     {
         //아이디 생성 그런느낌인거같음.
-        $user = Socialite::driver('google')->stateless()->user();
-//        $user = Socialite::driver('google')->user();
+//        $user = Socialite::driver('google')->stateless()->user();
+        $user = Socialite::driver('google')->user();
 
 //        dd($user);
-        $existUser = User::where('email',$user->email)->first();
+
+        $existUser = User::where('uid',$user->id)->first();
         if($existUser){
             if($user->refreshToken===null){
-                 User::where('email', $existUser->email)
+                 User::where('uid', $existUser->uid)
                     ->update(['name' => $user->getName()],['avatar' =>$user->getAvatar()]);
             }
             else{
-                User::where('email', $existUser->email)
+                User::where('uid', $existUser->uid)
                     ->update(['name' => $user->getName()],['avatar' =>$user->getAvatar()],['refresh_token'=> $user->refreshToken]);
             }
 //            $compareUser->save();
@@ -44,6 +44,7 @@ class LoginController extends Controller
         else{
             $user = User::firstOrCreate([
                 'name'  => $user->getName(),
+                'uid'  => $user->getId(),
                 'email' => $user->getEmail(),
                 'avatar' =>$user->getAvatar(),
                 'sns_type'=>'google',
@@ -53,11 +54,20 @@ class LoginController extends Controller
             auth()->login($user, false);
         }
 
-//        dd($user);
 
+        $userCredentials = [
+            'token' => $user->token,
+            'refreshToken' => $user->refreshToken,
+            'expiresIn' => $user->expiresIn,
+        ];
+
+//        dd($userCredentials);
+//        dd($user);
 //        Auth::guard('admin')->login($user);
 
-
+return        auth()->user();
         return redirect()->to('/');
+
+//        return redirect()->to(env('LOGIN_ENDPOINT'));
     }
 }
