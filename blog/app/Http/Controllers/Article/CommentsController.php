@@ -13,6 +13,11 @@ use Illuminate\Support\Facades\DB;
 
 class CommentsController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth')->only('store','edit','update','destroy');
+    }
+
     // 댓글 리스트 목록 (페이징)
     // 파라미터 글 번호 , 댓글 페이징 번호
     public function comments_list($postNum,$page)
