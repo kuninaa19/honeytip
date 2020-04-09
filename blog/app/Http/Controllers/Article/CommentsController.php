@@ -15,6 +15,7 @@ class CommentsController extends Controller
 {
     public function __construct()
     {
+        $this->middleware('cors');
         $this->middleware('auth')->only('store','edit','update','destroy');
     }
 

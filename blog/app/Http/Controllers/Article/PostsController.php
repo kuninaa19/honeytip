@@ -21,7 +21,9 @@ class PostsController extends Controller
 {
     public function __construct()
     {
+        $this->middleware('cors');
         $this->middleware('auth')->only('store','edit','update','destroy');
+        $this->middleware('auth')->except('index');
     }
 
 //글 리스트 목록 (페이징)
