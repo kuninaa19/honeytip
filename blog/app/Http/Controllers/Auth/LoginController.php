@@ -31,20 +31,9 @@ class LoginController extends Controller
 //      로그인
         Auth::login($user, false);
 
-        $userCredentials = ['headers' =>[
-            'Authorization' => 'Bearer '.$socialUser->token,
-            'expiresIn' => $socialUser->expiresIn,
-            'Accept' => 'application/json',
-//            'refreshToken' => $socialUser->refreshToken,
-        ]
-        ];
-
-        // dd($user);
-//        Auth::guard('admin')->login($user);
-                $info =  json_encode($userCredentials,JSON_UNESCAPED_UNICODE);
-
-//        return redirect()->to('/',$status = 302,$headers = [$info]);
-        return redirect()->to(env('LOGIN_ENDPOINT'));
+        //redirect하면 액세스에 대한 정보를 함꼐 전달한다 (헤더지정해서 보내지않아도 됨)
+//        return redirect()->to('/',$status = 302, $headers = ['access_token'=>$socialUser->token]);
+        return redirect()->to(env('LOGIN_ENDPOINT'),$status = 302, $headers = ['access_token'=>$socialUser->token]);
     }
 
     // 아이디 존재하지않으면 새로 생성 하는 메서드
