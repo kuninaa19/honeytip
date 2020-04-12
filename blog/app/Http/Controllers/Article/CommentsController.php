@@ -17,6 +17,8 @@ class CommentsController extends Controller
     {
         $this->middleware('cors');
         $this->middleware('auth')->only('store','edit','update','destroy');
+        $this->middleware('auth')->except('comments_list');
+
     }
 
     // 댓글 리스트 목록 (페이징)

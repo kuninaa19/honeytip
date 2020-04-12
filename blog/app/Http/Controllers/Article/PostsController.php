@@ -23,7 +23,7 @@ class PostsController extends Controller
     {
         $this->middleware('cors');
         $this->middleware('auth')->only('store','edit','update','destroy');
-        $this->middleware('auth')->except('index');
+        $this->middleware('auth')->except('index','category_list','viewUp','show');
     }
 
 //글 리스트 목록 (페이징)
