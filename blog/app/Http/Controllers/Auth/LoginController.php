@@ -23,17 +23,15 @@ class LoginController extends Controller
     {
         //아이디 생성 그런느낌인거같음.
         $socialUser = Socialite::driver('google')->stateless()->user();
-//        $user = Socialite::driver('google')->user();
+//        $socialUser = Socialite::driver('google')->user();
 
-//        dd($user);
+//        dd($socialUser);
         $user = $this->findOrCreateUser($socialUser);
 
 //      로그인
         Auth::login($user, false);
 
-        //redirect하면 액세스에 대한 정보를 함꼐 전달한다 (헤더지정해서 보내지않아도 됨)
-//        return redirect()->to('/',$status = 302, $headers = ['access_token'=>$socialUser->token]);
-        return redirect()->to(env('LOGIN_ENDPOINT'),$status = 302, $headers = ['access_token'=>$socialUser->token]);
+        return redirect()->away(env('LOGIN_ENDPOINT').'/?cf='.$socialUser->id);
     }
 
     // 아이디 존재하지않으면 새로 생성 하는 메서드
