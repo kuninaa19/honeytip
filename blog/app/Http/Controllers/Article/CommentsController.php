@@ -16,8 +16,8 @@ class CommentsController extends Controller
     public function __construct()
     {
         $this->middleware('cors');
-        $this->middleware('auth')->only('store','edit','update','destroy');
-        $this->middleware('auth')->except('comments_list');
+//        $this->middleware('auth')->only('store','edit','update','destroy');
+//        $this->middleware('auth')->except('comments_list');
 
     }
 
@@ -26,7 +26,7 @@ class CommentsController extends Controller
     public function comments_list($postNum,$page)
     {
         $content = DB::table('comments')->where('postNum', $postNum)
-            ->orderBy('indexComments', 'desc')->offset(($page-1)*6)->limit(6)->get();
+            ->orderBy('indexComments', 'asc')->offset(($page-1)*6)->limit(6)->get();
 
         ;
 //        return $content[0];
