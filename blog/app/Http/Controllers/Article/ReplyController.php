@@ -1,5 +1,8 @@
 <?php
-
+// 2. store() 대댓글 DB저장
+// 3. edit () 대댓글 수정하기위한 작성된 댓글 내용가져오기
+// 4. update() 대댓글 수정
+// 5. destroy() 대댓글 삭제
 namespace App\Http\Controllers\Article;
 
 use App\Http\Controllers\Controller;
@@ -8,38 +11,92 @@ use Illuminate\Support\Facades\DB;
 
 class ReplyController extends Controller
 {
-    public function index()
+    public function __construct()
     {
-        return '[' . __METHOD__ . '] ' . 'respond the index page';
+        $this->middleware('cors');
+//        $this->middleware('auth')->only('store','edit','update','destroy');
+//        $this->middleware('auth')->except('comments_list');
+
     }
 
-    public function create()
-    {
-        return '[' . __METHOD__ . '] ' . 'respond a create form';
-    }
-
+    //댓글 DB저장하기
     public function store(Request $request)
     {
-        return '[' . __METHOD__ . '] ' . 'validate the form data from the create form and create a new instance';
+        $name = $request->input('userName');
+        $comment = $request->input('comment');
+        $category = $request->input('category');
+        $postNum = $request->input('postNum');
+
+        $store = DB::table('comments')->insertGetId(['userName' => $name, 'comment' => $comment,
+            'postNum' => $postNum, 'category'=> $category, 'date'=>NOW()]);
+
+        $confirm = DB::table('comments')->where('indexComments',$store)->first();
+
+        //DB검색해서 가져온 값이 비었는지 확인
+        if(empty($confirm->indexComments)){
+            $data = array(
+                'key'=>false
+            );
+        }
+        else {
+            $data = array(
+                'key'=>true,
+                'commentIndex'=>$store
+            );
+        }
+        return json_encode($data,JSON_UNESCAPED_UNICODE);
     }
 
-    public function show($id)
-    {
-        return '[' . __METHOD__ . '] ' . 'respond an instance having id of ' . $id;
-    }
-
+    // 댓글 수정하기위한 작성된 댓글 내용가져오기
     public function edit($id)
     {
-        return '[' . __METHOD__ . '] ' . 'respond an edit form for id of ' . $id;
+        $comment = DB::table('comments')->where('indexComments', $id)->first();
+
+        if(empty($comment->indexComments)){
+            $data = array(
+                'key'=>false
+            );
+        }
+        else{
+            $data = array(
+                'key'=>true,
+                'comment' => $comment->comment
+            );
+        }
+        return json_encode($data,JSON_UNESCAPED_UNICODE);
     }
 
+    // 댓글 수정하기 버튼 누르고 DB에 수정된 댓글 저장
     public function update(Request $request, $id)
     {
-        return '[' . __METHOD__ . '] ' . 'validate the form data from the edit form and update the resource having id of ' . $id;
+        $comment = $request->input('comment');
+
+        DB::table('comments')->where('indexComments', $id)->update(['comment'=>$comment]);
+
+        $data = array(
+            'key'=>true
+        );
+        return json_encode($data,JSON_UNESCAPED_UNICODE);
     }
 
+    // 댓글 삭제
     public function destroy($id)
     {
-        return '[' . __METHOD__ . '] ' . 'delete resource ' . $id;
+        $confirm = DB::table('comments')->where('indexComments',$id)->first();
+
+        //DB검색해서 가져온 값이 비었다. 이미 삭제됨
+        if(empty($confirm->indexComments)){
+            $data = array(
+                'key'=>false
+            );
+            return json_encode($data,JSON_UNESCAPED_UNICODE);
+        }
+
+        DB::table('comments')->where('indexComments', $id)->delete();
+
+        $data = array(
+            'key'=>true
+        );
+        return json_encode($data,JSON_UNESCAPED_UNICODE);
     }
 }
