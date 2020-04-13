@@ -29,8 +29,13 @@ class ReplyController extends Controller
 
         $orderNum = DB::table('reply')->where(['postNum'=>$postNum,'parentComment'=>$parent])->orderBy('order','desc')->first();
 
-        $store = DB::table('reply')->insertGetId(['userName' => $name, 'reply' => $reply,
-            'postNum' => $postNum, 'parentComment'=> $parent, 'date'=>NOW(),'order'=>$orderNum->order+1]);
+        if(empty($orderNum->indexReply)){
+            $store = DB::table('reply')->insertGetId(['userName' => $name, 'reply' => $reply,
+                'postNum' => $postNum, 'parentComment'=> $parent, 'date'=>NOW(),'order'=>0]);
+        } else{
+            $store = DB::table('reply')->insertGetId(['userName' => $name, 'reply' => $reply,
+                'postNum' => $postNum, 'parentComment'=> $parent, 'date'=>NOW(),'order'=>$orderNum->order+1]);
+        }
 
         $confirm = DB::table('reply')->where('indexReply',$store)->first();
 
