@@ -1,13 +1,14 @@
 <?php
 // 1. category_list() 카테고리별 글 리스트 목록
-// 2. imagestore() 글생성 전 이미지 저장
-// 3. viewUp() 조회수 증가
-// 4 index() 메인페이지 최신 글 6개 보내주기
-// 4. store() 글 생성
-// 5. show () 글 상세페이지
-// 6. edit () 글 수정하기위한 작성된 글 내용가져오기
-// 7. update() 글 수정
-// 8. destroy() 글 삭제
+// 2. post_list() 카테고리별 글 리스트 전체목록
+// 3. imagestore() 글생성 전 이미지 저장
+// 4. viewUp() 조회수 증가
+// 5 index() 메인페이지 최신 글 6개 보내주기
+// 6. store() 글 생성
+// 7. show () 글 상세페이지
+// 8. edit () 글 수정하기위한 작성된 글 내용가져오기
+// 9. update() 글 수정
+// 10. destroy() 글 삭제
 
 namespace App\Http\Controllers\Article;
 
@@ -22,10 +23,27 @@ class PostsController extends Controller
     public function __construct()
     {
         $this->middleware('cors');
-        $this->middleware('auth')->only('store','edit','update','destroy');
-        $this->middleware('auth')->except('index','category_list','viewUp','show');
+//        $this->middleware('auth')->only('store','edit','update','destroy');
+//        $this->middleware('auth')->except('index','category_list','viewUp','show');
     }
 
+    public  function  post_list($category){
+        $content = DB::table('posts')->where('category', $category)
+            ->orderBy('indexPosts', 'desc')->get();
+
+        if (empty($content[0])) {
+            $data = array(
+                'key' => false
+            );
+        } else {
+            $data = array(
+                'key' => true,
+                'contents' => $content
+            );
+        }
+        return json_encode($data,JSON_UNESCAPED_UNICODE);
+//      return response()->json($data);
+    }
 //글 리스트 목록 (페이징)
     public function category_list($category,$num){
         $content = DB::table('posts')->where('category', $category)
