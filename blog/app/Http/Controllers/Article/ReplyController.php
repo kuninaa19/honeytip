@@ -27,13 +27,12 @@ class ReplyController extends Controller
         $parent = $request->input('indexComment');
         $postNum = $request->input('postNum');
 
-        $orderNum = DB::table('reply')->where(['postNum'=>$postNum,'parentComments'=>$parent])->orderBy('order','asc')->first();
-
+        $orderNum = DB::table('reply')->where(['postNum'=>$postNum,'parentComment'=>$parent])->orderBy('order','desc')->first();
 
         $store = DB::table('reply')->insertGetId(['userName' => $name, 'reply' => $reply,
-            'postNum' => $postNum, 'parentComment'=> $parent, 'date'=>NOW(),'order'=>$orderNum+1]);
+            'postNum' => $postNum, 'parentComment'=> $parent, 'date'=>NOW(),'order'=>$orderNum->order+1]);
 
-        $confirm = DB::table('reply')->where('indexRely',$store)->first();
+        $confirm = DB::table('reply')->where('indexReply',$store)->first();
 
         //DB검색해서 가져온 값이 비었는지 확인
         if(empty($confirm->indexReply)){
