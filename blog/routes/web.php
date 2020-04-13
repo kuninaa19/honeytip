@@ -33,6 +33,8 @@ Route::middleware(['cors'])->group(function(){
 
 //글 관련 Route
     Route::resource('posts', 'Article\PostsController',['except' => ['create']]);
+    //관리자페이지 전체 글 내용 보여주기
+    Route::get('posts/{category}/all', 'Article\PostsController@post_list');
     //글작성 이미지저장
     Route::post('posts/image', 'Article\PostsController@imageStore');
     //카테고리별 글리스트
@@ -47,4 +49,4 @@ Route::middleware(['cors'])->group(function(){
 
 
 // 대댓글 관련 Route
-    Route::resource('reply', 'Article\ReplyController',['except' => ['index','create']]);
+    Route::resource('reply', 'Article\ReplyController',['except' => ['index','create','show']]);
