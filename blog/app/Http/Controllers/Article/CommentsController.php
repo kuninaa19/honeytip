@@ -10,6 +10,7 @@ namespace App\Http\Controllers\Article;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Arr;
 
 class CommentsController extends Controller
 {
@@ -24,24 +25,50 @@ class CommentsController extends Controller
     // 파라미터 글 번호 , 댓글 페이징 번호
     public function comments_list($postNum,$page)
     {
-        $content = DB::table('comments')->where('postNum', $postNum)
-            ->orderBy('groupNum','asc')
-                ->orderBy('indexComments','asc')
-                ->orderBy('order','asc')
-            ->offset(($page-1)*6)->limit(6)->get();
+        $contentCount = DB::table('comments')
+            ->where(['postNum'=> $postNum,'class'=> 0])->count();
+//            ->orderBy('indexComments', 'asc')->offset(($page-1)*6)->limit(6)->count();
 
-//        return $content[0];
-//        return json_encode($content[0]->date);
-        if (empty($content[0])) {
+
+        //페이지네이션 페이지마다 최소요구개수를 충족하는지 판단
+        if ($contentCount<(($page-1)*6+1)) {
             $data = array(
                 'key' => false
             );
-        } else {
-            $data = array(
+            return json_encode($data,JSON_UNESCAPED_UNICODE);
+        }
+
+        //페이지네이션 내부 댓글 인덱스번호(배열형태)
+        $indexNums = DB::table('comments')
+            ->where(['postNum'=> $postNum,'class'=> 0])
+            ->offset(($page-1)*6)->limit(6)
+            ->pluck('indexComments');
+
+//        return json_encode($indexNums,JSON_UNESCAPED_UNICODE);
+
+        // 페이지네이션번호마다 포함되는 대댓글 개수파악
+        $replyCount = DB::table('comments')
+            ->where(['postNum'=> $postNum,'class'=> 1])
+            ->whereIn('groupNum',$indexNums)
+            ->pluck('indexComments');
+//            ->count();
+
+        //배열 합치기
+        $array =Arr::collapse([$indexNums, $replyCount]);
+
+        $content = DB::table('comments')->where('postNum', $postNum)
+            ->whereIn('groupNum',$array)
+            ->orderBy('groupNum','asc')
+            ->orderBy('indexComments','asc')
+            ->orderBy('order','asc')
+            ->get();
+//            ->offset(($page-1)*6)->limit(6)->get();
+
+        $data = array(
                 'key' => true,
                 'contents' => $content
             );
-        }
+
         return json_encode($data,JSON_UNESCAPED_UNICODE);
 //      return response()->json($data);
     }
