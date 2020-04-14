@@ -21,20 +21,20 @@ class ReplyController extends Controller
     //대댓글 DB저장하기
     public function store(Request $request)
     {
-        $parent = $request->input('indexComments');
+        $groupId = $request->input('indexComments');
         $name = $request->input('userName');
         $comment = $request->input('comment');
         $postNum = $request->input('postNum');
         $category = $request->input('category');
 
-        $orderNum = DB::table('comments')->where(['postNum'=>$postNum,'parentComment'=>$parent])->orderBy('order','desc')->first();
+        $orderNum = DB::table('comments')->where(['postNum'=>$postNum,'groupNum'=>$groupId])->orderBy('order','desc')->first();
 
         if(empty($orderNum->indexComments)){
             $store = DB::table('comments')->insertGetId(['userName' => $name, 'comment' => $comment,
-                'postNum' => $postNum,'category'=> $category, 'parentComment'=> $parent, 'date'=>NOW(),'class'=> 1,'order'=>0]);
+                'postNum' => $postNum,'category'=> $category, 'groupNum'=> $groupId, 'date'=>NOW(),'class'=> 1,'order'=>0]);
         } else{
             $store = DB::table('comments')->insertGetId(['userName' => $name, 'comment' => $comment,
-                'postNum' => $postNum, 'parentComment'=> $parent, 'date'=>NOW(),'class'=> 1,'order'=>$orderNum->order+1]);
+                'postNum' => $postNum, 'groupNum'=> $groupId,'category'=> $category, 'date'=>NOW(),'class'=> 1,'order'=>$orderNum->order+1]);
         }
 
         $confirm = DB::table('comments')->where('indexComments',$store)->first();
