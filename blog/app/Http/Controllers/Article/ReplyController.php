@@ -1,8 +1,8 @@
 <?php
-// 2. store() 대댓글 DB저장
-// 3. edit () 대댓글 수정하기위한 작성된 댓글 내용가져오기
-// 4. update() 대댓글 수정
-// 5. destroy() 대댓글 삭제
+// 1. store() 대댓글 DB저장
+// 2. edit () 대댓글 수정하기위한 작성된 댓글 내용가져오기
+// 3. update() 대댓글 수정
+// 4. destroy() 대댓글 삭제
 namespace App\Http\Controllers\Article;
 
 use App\Http\Controllers\Controller;
