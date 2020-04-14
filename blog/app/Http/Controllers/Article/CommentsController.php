@@ -18,7 +18,6 @@ class CommentsController extends Controller
         $this->middleware('cors');
 //        $this->middleware('auth')->only('store','edit','update','destroy');
 //        $this->middleware('auth')->except('comments_list');
-
     }
 
     // 댓글 리스트 목록 (페이징)
@@ -26,9 +25,11 @@ class CommentsController extends Controller
     public function comments_list($postNum,$page)
     {
         $content = DB::table('comments')->where('postNum', $postNum)
-            ->orderBy('indexComments', 'asc')->offset(($page-1)*6)->limit(6)->get();
+            ->orderBy('groupNum','asc')
+                ->orderBy('indexComments','asc')
+                ->orderBy('order','asc')
+            ->offset(($page-1)*6)->limit(6)->get();
 
-        ;
 //        return $content[0];
 //        return json_encode($content[0]->date);
         if (empty($content[0])) {
@@ -55,6 +56,8 @@ class CommentsController extends Controller
 
         $store = DB::table('comments')->insertGetId(['userName' => $name, 'comment' => $comment,
             'postNum' => $postNum, 'category'=> $category, 'date'=>NOW()]);
+
+        DB::table('comments')->where('indexComments', $store)->update(['groupNum'=>$store]);
 
         $confirm = DB::table('comments')->where('indexComments',$store)->first();
 
