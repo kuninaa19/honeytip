@@ -57,8 +57,17 @@ class LoginController extends Controller
             return $existUser;
         }
         else{
+            $nickname = 'null';
+
+            if($socialUser->getNickname()===null){
+                $nickname=$socialUser->getName();
+            }
+            else{
+                $nickname=$socialUser->getNickname();
+            }
+
             $user = User::firstOrCreate([
-                'name'  => $socialUser->getName(),
+                'name'  => $nickname,
                 'uid'  => $socialUser->getId(),
                 'email' => $socialUser->getEmail(),
                 'avatar' =>$socialUser->getAvatar(),
