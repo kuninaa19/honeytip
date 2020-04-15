@@ -20,8 +20,8 @@ Route::get('/login', function () {
 })->name('login');
 
 // 구글 소셜로그인
-Route::get('auth/social/google', 'Auth\LoginController@redirectToProvider');
-Route::get('/google/callback', 'Auth\LoginController@handleProviderCallback');
+Route::get('auth/social/{social}', 'Auth\LoginController@redirectToProvider');
+Route::get('/{social}/callback', 'Auth\LoginController@handleProviderCallback');
 
 //관리자로그인 관리자 아이디 생성
 Route::middleware(['cors'])->group(function(){
