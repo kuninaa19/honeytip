@@ -12,21 +12,21 @@ use App\User;
 class LoginController extends Controller
 {
     // 1. redirectToProvider() 구글에 로그인요청
-    public function redirectToProvider()
+    public function redirectToProvider($social)
     {
 //        return Socialite::driver('google')->redirect();
-        return Socialite::driver('google')->with(['access_type'=>'offline'])->redirect();
+        return Socialite::driver($social)->with(['access_type'=>'offline'])->redirect();
     }
 
 // 2. handleProviderCallback () 로그인한 후에 이미 만들어진 아이디인지 확인후 처리
-    public function handleProviderCallback()
+    public function handleProviderCallback($social)
     {
         //아이디 생성 그런느낌인거같음.
-        $socialUser = Socialite::driver('google')->stateless()->user();
+        $socialUser = Socialite::driver($social)->stateless()->user();
 //        $socialUser = Socialite::driver('google')->user();
 
 //        dd($socialUser);
-        $user = $this->findOrCreateUser($socialUser);
+        $user = $this->findOrCreateUser($socialUser,$social);
 
 //      로그인
         Auth::login($user, false);
@@ -35,7 +35,7 @@ class LoginController extends Controller
     }
 
     // 아이디 존재하지않으면 새로 생성 하는 메서드
-    public function findOrCreateUser($socialUser){
+    public function findOrCreateUser($socialUser,$social){
         $existUser = User::where('uid',$socialUser->id)->first();
         if($existUser){
             if($socialUser->refreshToken!==null){
@@ -62,7 +62,7 @@ class LoginController extends Controller
                 'uid'  => $socialUser->getId(),
                 'email' => $socialUser->getEmail(),
                 'avatar' =>$socialUser->getAvatar(),
-                'sns_type'=>'google',
+                'sns_type'=>$social,
                 'refresh_token'=> $socialUser->refreshToken
 //            'token'=>$user->token,
             ]);
