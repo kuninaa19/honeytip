@@ -40,7 +40,11 @@ class LoginController extends Controller
         if($existUser){
             if($socialUser->refreshToken!==null){
                 User::where('uid', $existUser->uid)
-                    ->update(['refresh_token'=> $socialUser->refreshToken]);
+                    ->update(['access_token' => $socialUser->token],['refresh_token'=> $socialUser->refreshToken]);
+            }
+            else{
+                User::where('uid', $existUser->uid)
+                    ->update(['access_token' => $socialUser->token]);
             }
 
 //            if($socialUser->refreshToken===null){
@@ -72,6 +76,7 @@ class LoginController extends Controller
                 'email' => $socialUser->getEmail(),
                 'avatar' =>$socialUser->getAvatar(),
                 'sns_type'=>$social,
+                'access_token'=>$socialUser->token,
                 'refresh_token'=> $socialUser->refreshToken
 //            'token'=>$user->token,
             ]);
