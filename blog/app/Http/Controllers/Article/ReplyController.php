@@ -26,15 +26,25 @@ class ReplyController extends Controller
         $comment = $request->input('comment');
         $postNum = $request->input('postNum');
         $category = $request->input('category');
+        $uid = $request->input('uid');
+
+        //uid가 값이 없다면 거절메세지
+        if($uid!==null){
+            $data = array(
+                'key'=>false
+            );
+            return json_encode($data,JSON_UNESCAPED_UNICODE);
+
+        }
 
         $orderNum = DB::table('comments')->where(['postNum'=>$postNum,'groupNum'=>$groupId])->orderBy('order','desc')->first();
 
         if(empty($orderNum->indexComments)){
             $store = DB::table('comments')->insertGetId(['userName' => $name, 'comment' => $comment,
-                'postNum' => $postNum,'category'=> $category, 'groupNum'=> $groupId, 'date'=>NOW(),'class'=> 1,'order'=>0]);
+                'postNum' => $postNum, 'uid'=>$uid,'category'=> $category, 'groupNum'=> $groupId, 'date'=>NOW(),'class'=> 1,'order'=>0]);
         } else{
             $store = DB::table('comments')->insertGetId(['userName' => $name, 'comment' => $comment,
-                'postNum' => $postNum, 'groupNum'=> $groupId,'category'=> $category, 'date'=>NOW(),'class'=> 1,'order'=>$orderNum->order+1]);
+                'postNum' => $postNum, 'uid'=>$uid, 'groupNum'=> $groupId,'category'=> $category, 'date'=>NOW(),'class'=> 1,'order'=>$orderNum->order+1]);
         }
 
         $confirm = DB::table('comments')->where('indexComments',$store)->first();

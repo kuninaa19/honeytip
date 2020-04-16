@@ -80,9 +80,19 @@ class CommentsController extends Controller
         $comment = $request->input('comment');
         $category = $request->input('category');
         $postNum = $request->input('postNum');
+        $uid = $request->input('uid');
+
+        //uid가 값이 없다면 거절메세지
+        if($uid!==null){
+            $data = array(
+                'key'=>false
+            );
+            return json_encode($data,JSON_UNESCAPED_UNICODE);
+
+        }
 
         $store = DB::table('comments')->insertGetId(['userName' => $name, 'comment' => $comment,
-            'postNum' => $postNum, 'category'=> $category, 'date'=>NOW()]);
+            'postNum' => $postNum, 'uid'=>$uid, 'category'=> $category, 'date'=>NOW()]);
 
         DB::table('comments')->where('indexComments', $store)->update(['groupNum'=>$store]);
 
