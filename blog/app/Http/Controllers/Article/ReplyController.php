@@ -29,7 +29,7 @@ class ReplyController extends Controller
         $uid = $request->input('uid');
 
         //uid가 값이 없다면 거절메세지
-        if($uid!==null){
+        if($uid===null){
             $data = array(
                 'key'=>false
             );
