@@ -39,13 +39,13 @@ class ReplyController extends Controller
 
         $orderNum = DB::table('comments')->where(['postNum'=>$postNum,'groupNum'=>$groupId])->orderBy('order','desc')->first();
 
-        if(empty($orderNum->indexComments)){
-            $store = DB::table('comments')->insertGetId(['userName' => $name, 'comment' => $comment,
-                'postNum' => $postNum, 'uid'=>$uid,'category'=> $category, 'groupNum'=> $groupId, 'date'=>NOW(),'class'=> 1,'order'=>0]);
-        } else{
-            $store = DB::table('comments')->insertGetId(['userName' => $name, 'comment' => $comment,
+//        if(empty($orderNum->indexComments)){
+//            $store = DB::table('comments')->insertGetId(['userName' => $name, 'comment' => $comment,
+//                'postNum' => $postNum, 'uid'=>$uid,'category'=> $category, 'groupNum'=> $groupId, 'date'=>NOW(),'class'=> 1,'order'=>1]);
+//        } else{
+        $store = DB::table('comments')->insertGetId(['userName' => $name, 'comment' => $comment,
                 'postNum' => $postNum, 'uid'=>$uid, 'groupNum'=> $groupId,'category'=> $category, 'date'=>NOW(),'class'=> 1,'order'=>$orderNum->order+1]);
-        }
+//        }
 
         $confirm = DB::table('comments')->where('indexComments',$store)->first();
 
