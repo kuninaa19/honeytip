@@ -1,6 +1,6 @@
 <?php
-// 1. category_list() 카테고리별 글 리스트 목록
-// 2. post_list() 카테고리별 글 리스트 전체목록
+// 1. post_list() 카테고리별 글 리스트 전체목록(관리자페이지)
+// 2. category_list() 카테고리별 글 리스트 목록
 // 3. image_store() 글생성 전 이미지 저장
 // 4. like_count() 좋아요 증가
 // 5 index() 메인페이지 최신 글 6개 보내주기
@@ -27,6 +27,7 @@ class PostsController extends Controller
 //        $this->middleware('auth')->except('index','category_list','viewUp','show');
     }
 
+    // 1. post_list() 카테고리별 글 리스트 전체목록(관리자페이지)
     public  function  post_list($category){
         $content = DB::table('posts')->where('category', $category)
             ->orderBy('indexPosts', 'desc')->get();
