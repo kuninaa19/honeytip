@@ -1,14 +1,15 @@
 <?php
-// 1. post_list() 카테고리별 글 리스트 전체목록(관리자페이지)
-// 2. category_list() 카테고리별 글 리스트 목록
-// 3. image_store() 글생성 전 이미지 저장
-// 4. like_count() 좋아요 증가
-// 5 index() 메인페이지 최신 글 6개 보내주기
-// 6. store() 글 생성
-// 7. show () 글 상세페이지
-// 8. edit () 글 수정하기위한 작성된 글 내용가져오기
-// 9. update() 글 수정
-// 10. destroy() 글 삭제
+// popularity_ranking() 카테고리별 인기순위 정보
+// post_list() 카테고리별 글 리스트 전체목록(관리자페이지)
+// category_list() 카테고리별 글 리스트 목록
+// image_store() 글생성 전 이미지 저장
+// like_count() 좋아요 증가
+// index() 메인페이지 최신 글 6개 보내주기
+// store() 글 생성
+// show () 글 상세페이지
+//  edit () 글 수정하기위한 작성된 글 내용가져오기
+// update() 글 수정
+//  destroy() 글 삭제
 
 namespace App\Http\Controllers\Article;
 
@@ -27,7 +28,19 @@ class PostsController extends Controller
 //        $this->middleware('auth')->except('index','category_list','viewUp','show');
     }
 
-    // 1. post_list() 카테고리별 글 리스트 전체목록(관리자페이지)
+    //카테고리별 인기순위 정보
+    public function popularity_ranking($category){
+        $content = DB::table('posts')
+            ->leftJoin('comments', 'posts.category', '=', 'comments.category')
+            ->select('posts.indexPosts','posts.title','posts.likeIt','posts.subTitle','posts.category',DB::raw('count(comments.postNum) as commentsCount'))
+            ->groupBy('posts.indexPosts')
+            ->where('posts.category', $category)
+            ->orderBy('likeIt', 'desc')
+            ->get();
+
+        return $content;
+    }
+    // 카테고리별 글 리스트 전체목록(관리자페이지)
     public  function  post_list($category){
         $content = DB::table('posts')->where('category', $category)
             ->orderBy('indexPosts', 'desc')->get();
@@ -45,10 +58,14 @@ class PostsController extends Controller
         return json_encode($data,JSON_UNESCAPED_UNICODE);
 //      return response()->json($data);
     }
-//글 리스트 목록 (페이징)
+
+    //글 리스트 목록 (페이징)
     public function category_list($category,$num){
         $content = DB::table('posts')->where('category', $category)
+            ->select('indexPosts','title','likeIt','subTitle','category','date','likeIt','image')
             ->orderBy('indexPosts', 'desc')->offset(($num-1)*6)->limit(6)->get();
+
+        $rankingContent = $this->popularity_ranking($category);
 
         if (empty($content[0])) {
             $data = array(
@@ -57,7 +74,8 @@ class PostsController extends Controller
         } else {
             $data = array(
                 'key' => true,
-                'contents' => $content
+                'contents' => $content,
+                'rankingContent'=>$rankingContent
             );
         }
         return json_encode($data,JSON_UNESCAPED_UNICODE);
