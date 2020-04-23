@@ -1,5 +1,5 @@
 <?php
-// 1. storeSecret() 관리자 아이디 생성
+// 1. store_secret() 관리자 아이디 생성
 // 2. login () 관리자 로그인인증
 
 namespace App\Http\Controllers\Auth;
@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Crypt;
 class AdminController extends Controller
 {
     // 관리자 아이디 생성
-    public function storeSecret(Request $request)
+    public function store_secret(Request $request)
     {
         $id = $request->input('id');
         $pw = $request->input('pw');
