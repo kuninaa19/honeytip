@@ -78,19 +78,26 @@ class PostsController extends Controller
     //메인페이지 최신 글 6개 보내주기
     public function index()
     {
-        $post = DB::table('posts')->orderBy('indexPosts', 'desc')->limit(6)->get();
+//     $post = DB::table('posts')->orderBy('indexPosts', 'desc')->limit(6)->get();
+
+        $post = DB::table('posts')
+            ->leftJoin('comments', 'posts.indexPosts', '=', 'comments.postNum')
+            ->select('posts.indexPosts', 'posts.image', 'posts.subTitle','posts.title','likeIt',DB::raw('count(comments.postNum) as commentsCount'))
+            ->groupBy('posts.indexPosts')
+            ->orderBy('indexPosts', 'desc')->limit(6)
+            ->get();
 
         $data = array(
             'key'=>false
         );
 
         //DB검색해서 가져온 값이 존재하는지 확인
-//        if(isset($post->indexPosts)){
+        if(isset($post[0]->indexPosts)){
             $data = array(
                 'key'=>true,
                 'postInfo'=> $post
             );
-//        }
+        }
 
         return json_encode($data,JSON_UNESCAPED_UNICODE);
 //     return response()->json($data);
