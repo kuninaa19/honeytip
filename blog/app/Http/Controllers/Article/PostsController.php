@@ -1,8 +1,8 @@
 <?php
 // 1. category_list() 카테고리별 글 리스트 목록
 // 2. post_list() 카테고리별 글 리스트 전체목록
-// 3. imagestore() 글생성 전 이미지 저장
-// 4. viewUp() 조회수 증가
+// 3. image_store() 글생성 전 이미지 저장
+// 4. like_count() 좋아요 증가
 // 5 index() 메인페이지 최신 글 6개 보내주기
 // 6. store() 글 생성
 // 7. show () 글 상세페이지
@@ -64,14 +64,14 @@ class PostsController extends Controller
     }
 
     //이미지 저장후 주소 전달
-    public function imageStore(Request $request){
+    public function image_store(Request $request){
         $image_path = $request->file('fileToUpload')->store('images','public');
 
         return $image_path;
     }
 
-    //글 조회수 +1 증가
-    public function viewUp($category,$num){
+    //글 좋아요 +1 증가
+    public function like_count($category,$num){
         return  $category.$num;
     }
 
