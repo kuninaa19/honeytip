@@ -90,8 +90,28 @@ class PostsController extends Controller
     }
 
     //글 좋아요 +1 증가
-    public function like_count($category,$num){
-        return  $category.$num;
+    public function like_count($num){
+        $content = DB::table('posts')
+            ->select('likeIt')
+            ->where('indexPosts',$num)
+            ->lockForUpdate()
+            ->get();
+
+        DB::table('posts')
+            ->where('indexPosts', $num)
+            ->update(['likeIt' => $content[0]->likeIt+1]);
+
+        $like = DB::table('posts')
+            ->select('likeIt')
+            ->where('indexPosts',$num)
+            ->first();
+
+        $data = array(
+            'key'=>true,
+            'likeIt'=>$like->likeIt
+        );
+
+        return json_encode($data,JSON_UNESCAPED_UNICODE);
     }
 
     //메인페이지 최신 글 6개 보내주기
