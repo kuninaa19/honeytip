@@ -75,7 +75,7 @@ class PostsController extends Controller
             $data = array(
                 'key' => true,
                 'contents' => $content,
-                'rankingContent'=>$rankingContent
+                'rankingContents'=>$rankingContent
             );
         }
         return json_encode($data,JSON_UNESCAPED_UNICODE);
