@@ -43,8 +43,8 @@ Route::middleware(['cors'])->group(function(){
     Route::post('posts/image', 'Article\PostsController@image_store');
     //카테고리별 글리스트
     Route::get('posts/{category}/{num}', 'Article\PostsController@category_list');
-    //글 좋아요수 +1 증가(작업 아직안함)
-    Route::get('posts/{num}', 'Article\PostsController@like_count');
+    //글 좋아요 클릭(+1) 클릭된것을 한번더 누르면 -1
+    Route::get('posts/like/click/{num}', 'Article\PostsController@like_count');
 
 
 // 댓글 관련 Route
