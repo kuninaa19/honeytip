@@ -135,22 +135,25 @@ class PostsController extends Controller
     //글 상세 내용페이지
     public function show($id)
     {
-        $post = DB::table('posts')->where( 'indexPosts', $id)->first();
+        $post = DB::table('posts')
+            ->leftJoin('comments', 'posts.indexPosts', '=', 'comments.postNum')
+            ->select('posts.*',DB::raw('count(comments.postNum) as commentsCount'))
+            ->groupBy('posts.indexPosts')
+            ->where('indexPosts', $id)
+            ->orderBy('indexPosts', 'desc')
+            ->first();
+
+//        $post = DB::table('posts')->where('indexPosts', $id)->first();
 
         $data = array(
-            'key'=>false
+            'key'=>false,
         );
 
         //DB검색해서 가져온 값이 존재하는지 확인
         if(isset($post->indexPosts)){
             $data = array(
                 'key'=>true,
-                'postInfo'=> array (
-                    'title'=>$post->title,
-                    'contents'=>$post->contents,
-                    'date'=>$post->date,
-                    'viewCounts'=>$post->viewCount
-                )
+                'postInfo'=> $post
             );
         }
 
