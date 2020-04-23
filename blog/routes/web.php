@@ -28,7 +28,7 @@ Route::middleware(['cors'])->group(function(){
     Route::get('/csrf_token', function(){
         return csrf_token();
     });
-    Route::post('make_id','Auth\AdminController@storeSecret');
+    Route::post('make_id','Auth\AdminController@store_secret');
     Route::post('login','Auth\AdminController@login');
 });
 
@@ -40,11 +40,11 @@ Route::middleware(['cors'])->group(function(){
     //관리자페이지 전체 글 내용 보여주기
     Route::get('posts/{category}/all', 'Article\PostsController@post_list');
     //글작성 이미지저장
-    Route::post('posts/image', 'Article\PostsController@imageStore');
+    Route::post('posts/image', 'Article\PostsController@image_store');
     //카테고리별 글리스트
     Route::get('posts/{category}/{num}', 'Article\PostsController@category_list');
     //글 조회수 +1 증가(작업 아직안함)
-    Route::get('posts/{num}', 'Article\PostsController@viewUp');
+    Route::get('posts/{num}', 'Article\PostsController@like_count');
 
 
 // 댓글 관련 Route
