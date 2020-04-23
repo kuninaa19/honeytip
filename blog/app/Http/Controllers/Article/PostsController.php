@@ -1,6 +1,7 @@
 <?php
-// popularity_ranking() 카테고리별 인기순위 정보
+// comments_list() 전체 댓글목록(관리자페이지)
 // post_list() 카테고리별 글 리스트 전체목록(관리자페이지)
+// popularity_ranking() 카테고리별 인기순위 정보
 // category_list() 카테고리별 글 리스트 목록
 // image_store() 글생성 전 이미지 저장
 // like_count() 좋아요 증가
@@ -28,7 +29,38 @@ class PostsController extends Controller
 //        $this->middleware('auth')->except('index','category_list','viewUp','show');
     }
 
-    //카테고리별 인기순위 정보
+    //카테고리별 인기순위 정보 [category_list 연관]
+    public function comments_list(){
+        $content = DB::table('comments')
+            ->select('userName','category','date','indexComments','comment')
+            ->get();
+
+        return $content;
+    }
+
+    // 카테고리별 글 리스트 전체목록(관리자페이지)
+    public  function  post_list($category){
+        $content = DB::table('posts')->where('category', $category)
+            ->orderBy('indexPosts', 'desc')->get();
+
+        $commentsList = $this->comments_list();
+
+        if (empty($content[0])) {
+            $data = array(
+                'key' => false
+            );
+        } else {
+            $data = array(
+                'key' => true,
+                'contents' => $content,
+                'commentsList'=>$commentsList
+            );
+        }
+        return json_encode($data,JSON_UNESCAPED_UNICODE);
+//      return response()->json($data);
+    }
+
+    //카테고리별 인기순위 정보 [category_list 연관]
     public function popularity_ranking($category){
         $content = DB::table('posts')
             ->leftJoin('comments', 'posts.category', '=', 'comments.category')
@@ -39,24 +71,6 @@ class PostsController extends Controller
             ->get();
 
         return $content;
-    }
-    // 카테고리별 글 리스트 전체목록(관리자페이지)
-    public  function  post_list($category){
-        $content = DB::table('posts')->where('category', $category)
-            ->orderBy('indexPosts', 'desc')->get();
-
-        if (empty($content[0])) {
-            $data = array(
-                'key' => false
-            );
-        } else {
-            $data = array(
-                'key' => true,
-                'contents' => $content
-            );
-        }
-        return json_encode($data,JSON_UNESCAPED_UNICODE);
-//      return response()->json($data);
     }
 
     //글 리스트 목록 (페이징)
