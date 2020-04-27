@@ -1,9 +1,10 @@
 <?php
-// 1. comments_list() 댓글 리스트 목록 (페이징)
-// 2. store() 댓글 DB저장
-// 3. edit () 댓글 수정하기위한 작성된 댓글 내용가져오기
-// 4. update() 댓글 수정
-// 5. destroy() 댓글 삭제
+// comments_list() 댓글 리스트 목록 (페이징)
+// index()  댓글 리스트 전체목록(관리자페이지)
+// store() 댓글 DB저장
+// edit () 댓글 수정하기위한 작성된 댓글 내용가져오기
+// update() 댓글 수정
+// destroy() 댓글 삭제
 
 namespace App\Http\Controllers\Article;
 
@@ -73,7 +74,29 @@ class CommentsController extends Controller
 //      return response()->json($data);
     }
 
-    //댓글 DB저장하기
+    // 댓글 리스트 전체목록(관리자페이지)
+    public function index()
+    {
+        $content = DB::table('comments')
+            ->select('userName','category','date','indexComments','comment')
+            ->get();
+
+        if (empty($content[0])) {
+            $data = array(
+                'key' => false
+            );
+        } else {
+            $data = array(
+                'key' => true,
+                'contents' => $content,
+            );
+        }
+
+        return json_encode($data,JSON_UNESCAPED_UNICODE);
+//      return response()->json($data);
+    }
+
+    // 댓글 DB저장하기
     public function store(Request $request)
     {
         $name = $request->input('userName');
