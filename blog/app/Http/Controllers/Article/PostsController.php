@@ -132,6 +132,9 @@ class PostsController extends Controller
         $store = DB::table('posts')->insertGetId(['adminId' => $adminId, 'image' => 'https://honeytip.p-e.kr/storage/'.$image,
             'contents' => $contents, 'subTitle' => $subTitle, 'category'=> $category,'title'=>$title,'date'=>NOW()]);
 
+        // 좋아요를 위한 테이블
+        DB::table('post_like')->insert(['postNum', $store]);
+
         $confirm = DB::table('posts')->where('indexPosts',$store)->first();
 
         //DB검색해서 가져온 값이 비었는지 확인
