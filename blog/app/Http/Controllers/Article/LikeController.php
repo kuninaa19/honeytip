@@ -33,6 +33,8 @@ class LikeController extends Controller
         if($id==="guest"){
             return false;
         }
+
+        // 해당 게시글 좋아요 누른 유저 정보 가져오기
         $users = $this->get_user_list($postNum);
 
         // JSON Object -> PHP Array(True) 또는 Object(False or 없음) 변환
@@ -77,46 +79,45 @@ class LikeController extends Controller
                 ->where('indexPosts', $num)
                 ->update(['likeIt' => $content[0]->likeIt+1]);
 
-            $users = $this->get_user_list($num);
+            //해당 게시글 좋아요 첫 유저
+            if($content[0]->likeIt===0){
+                //유저아이디저장하기위한 문자열
+                $userName = '{"ID":[{"user":"'.$id.'"}]}';
 
-            // JSON Object -> PHP Array(True) 또는 Object(False or 없음) 변환
-            $idList =  json_decode($users[0]->likedPeople);
+                // 유저아이디 배열로 변환 JSON Object -> PHP Array(True) 또는 Object(False or 없음) 변환
+                $userArr = json_decode($userName,true);
 
-            $ck = 0;
-            for($i=0;$i< count($idList->ID);$i++){
-                if($id===$idList->ID[$i]->user){
-                    $ck=1;
-                    break;
-                }
-            }
-
-            //좋아요 누름
-            if($ck===1){
-                return "있음";
+                $ck = DB::table('post_like')
+                    ->where('postNum', $num)
+                    ->update(['likedPeople'=>$userArr]);
             }
             else{
-                return "없음";
-            }
+                // 해당 게시글 좋아요 누른 유저 정보 가져오기
+                $users = $this->get_user_list($num);
 
-//            //좋아요 누른 유저로 등록
-//            DB::table('post_like')
-//                ->where('postNum', $num)
-//                ->update(['likedPeople->ID' =>'{"ID":[{"user" : "'.$id.'"}]}']);
-//
-//
-//            $value = '[{user : '.$id.'}]';
-////        let user_id =  \'{"ID" : [{"user" : "\'+user+\'"}]}\';
-//
-//            // 채팅방에 참가중인 아이디인지 확인
-//            for(var i=0;i<objStr.ID.length;i++){
-//                if(objStr.ID[i].user===userID){
-//                    ck=1;
-//                    break;
-//                }
-//            }
-//        DB::table('post_like')
-//            ->where('postNum', $num)
-//            ->update(['likedPeople->ID' =>'{"ID":[{"user" : "'.$id.'"}]}']);
+                //저장에 대한 세부내용 로그 (PHP용 Console.log)
+//                var_dump(json_decode($users[0]->likedPeople,true));
+
+                //유저아이디저장하기위한 문자열
+                $userName = '{"user":"'.$id.'"}';
+
+                // 유저아이디 배열로 변환 JSON Object -> PHP Array(True) 또는 Object(False or 없음) 변환
+                $userArr = json_decode($userName,true);
+
+                //기존좋아요 누른 유저아이디 배열리스트
+                $idList =  json_decode($users[0]->likedPeople,true);
+
+                //기존유저배열에 추가
+                array_push($idList["ID"], $userArr);
+
+
+                $ck = DB::table('post_like')
+                ->where('postNum', $num)
+                ->update(['likedPeople'=>$idList]);
+            }
+            $data = array('key'=>$ck);
+
+            return json_encode($data,JSON_UNESCAPED_UNICODE);
         }
         //좋아요 취소
         else{
