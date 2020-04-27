@@ -45,9 +45,9 @@ Route::middleware(['cors'])->group(function(){
     Route::get('posts/{category}/{num}', 'Article\PostsController@category_list');
 
 //좋아요 관련 Route
-    Route::resource('like', 'Article\LikeController',['except' => ['create']]);
-    // 좋아요 확인
-    Route::get('like/{num}/{user}', 'Article\PostsController@like_count');
+    Route::resource('like', 'Article\LikeController',['except' => ['index','create','show','update','destroy']]);
+    //유저가 보고있는 글에 유저 좋아요를 했는지 안했는지 확인
+    Route::get('like/{postNum}/{id}', 'Article\LikeController@like_check');
 
 // 댓글 관련 Route
     Route::resource('comments', 'Article\CommentsController',['except' => ['create','show']]);
