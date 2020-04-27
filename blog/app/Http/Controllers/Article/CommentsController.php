@@ -79,6 +79,7 @@ class CommentsController extends Controller
     {
         $content = DB::table('comments')
             ->select('userName','category','date','indexComments','comment')
+            ->orderBy('indexComments', 'desc')
             ->get();
 
         if (empty($content[0])) {
