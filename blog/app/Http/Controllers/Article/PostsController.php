@@ -133,7 +133,7 @@ class PostsController extends Controller
             'contents' => $contents, 'subTitle' => $subTitle, 'category'=> $category,'title'=>$title,'date'=>NOW()]);
 
         // 좋아요를 위한 테이블
-        DB::table('post_like')->insert(['postNum', $store]);
+        DB::table('post_like')->insert(['postNum'=> $store]);
 
         $confirm = DB::table('posts')->where('indexPosts',$store)->first();
 
