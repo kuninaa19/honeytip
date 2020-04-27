@@ -1,5 +1,4 @@
 <?php
-// comments_list() 전체 댓글목록(관리자페이지)
 // post_list() 카테고리별 글 리스트 전체목록(관리자페이지)
 // popularity_ranking() 카테고리별 인기순위 정보
 // category_list() 카테고리별 글 리스트 목록
@@ -28,21 +27,10 @@ class PostsController extends Controller
 //        $this->middleware('auth')->except('index','category_list','viewUp','show');
     }
 
-    //카테고리별 인기순위 정보 [category_list 연관]
-    public function comments_list(){
-        $content = DB::table('comments')
-            ->select('userName','category','date','indexComments','comment')
-            ->get();
-
-        return $content;
-    }
-
     // 카테고리별 글 리스트 전체목록(관리자페이지)
     public  function  post_list($category){
         $content = DB::table('posts')->where('category', $category)
             ->orderBy('indexPosts', 'desc')->get();
-
-        $commentsList = $this->comments_list();
 
         if (empty($content[0])) {
             $data = array(
@@ -52,7 +40,6 @@ class PostsController extends Controller
             $data = array(
                 'key' => true,
                 'contents' => $content,
-                'commentsList'=>$commentsList
             );
         }
         return json_encode($data,JSON_UNESCAPED_UNICODE);
