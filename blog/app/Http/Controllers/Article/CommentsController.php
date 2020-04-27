@@ -78,7 +78,7 @@ class CommentsController extends Controller
     public function index()
     {
         $content = DB::table('comments')
-            ->select('userName','category','date','indexComments','comment')
+            ->select('userName','category','date','indexComments','comment','postNum')
             ->orderBy('indexComments', 'desc')
             ->get();
 
