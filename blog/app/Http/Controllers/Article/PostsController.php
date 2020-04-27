@@ -4,7 +4,6 @@
 // popularity_ranking() 카테고리별 인기순위 정보
 // category_list() 카테고리별 글 리스트 목록
 // image_store() 글생성 전 이미지 저장
-// like_count() 좋아요 증가
 // index() 메인페이지 최신 글 6개 보내주기
 // store() 글 생성
 // show () 글 상세페이지
@@ -104,30 +103,6 @@ class PostsController extends Controller
         return $image_path;
     }
 
-    //글 좋아요 +1 증가
-    public function like_count($num){
-        $content = DB::table('posts')
-            ->select('likeIt')
-            ->where('indexPosts',$num)
-            ->lockForUpdate()
-            ->get();
-
-        DB::table('posts')
-            ->where('indexPosts', $num)
-            ->update(['likeIt' => $content[0]->likeIt+1]);
-
-        $like = DB::table('posts')
-            ->select('likeIt')
-            ->where('indexPosts',$num)
-            ->first();
-
-        $data = array(
-            'key'=>true,
-            'likeIt'=>$like->likeIt
-        );
-
-        return json_encode($data,JSON_UNESCAPED_UNICODE);
-    }
 
     //메인페이지 최신 글 6개 보내주기
     public function index()
@@ -197,7 +172,7 @@ class PostsController extends Controller
             ->orderBy('indexPosts', 'desc')
             ->first();
 
-//        $post = DB::table('posts')->where('indexPosts', $id)->first();
+//      $post = DB::table('posts')->where('indexPosts', $id)->first();
 
         $data = array(
             'key'=>false,
@@ -212,7 +187,7 @@ class PostsController extends Controller
         }
 
         return json_encode($data,JSON_UNESCAPED_UNICODE);
-//     return response()->json($data);
+//      return response()->json($data);
     }
 
     //수정하려는 글에 대한 정보 전달
