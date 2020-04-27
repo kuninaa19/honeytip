@@ -29,7 +29,10 @@ class LikeController extends Controller
     }
     //유저가 보고있는 글에 유저 좋아요를 했는지 안했는지 확인
     public function like_check($postNum,$id){
-
+        // 게스트 유저면 바로 false;
+        if($id==="guest"){
+            return false;
+        }
         $users = $this->get_user_list($postNum);
 
         // JSON Object -> PHP Array(True) 또는 Object(False or 없음) 변환
