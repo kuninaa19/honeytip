@@ -43,12 +43,15 @@ Route::middleware(['cors'])->group(function(){
     Route::post('posts/image', 'Article\PostsController@image_store');
     //카테고리별 글리스트
     Route::get('posts/{category}/{num}', 'Article\PostsController@category_list');
-    //글 좋아요 클릭(+1) 클릭된것을 한번더 누르면 -1
-    Route::get('posts/like/click/{num}', 'Article\PostsController@like_count');
 
+//좋아요 관련 Route
+    Route::resource('like', 'Article\LikeController',['except' => ['create']]);
+    // 좋아요 확인
+    Route::get('like/{num}/{user}', 'Article\PostsController@like_count');
 
 // 댓글 관련 Route
-    Route::resource('comments', 'Article\CommentsController',['except' => ['index','create','show']]);
+    Route::resource('comments', 'Article\CommentsController',['except' => ['create','show']]);
+    // 댓글 리스트 목록 (페이징)
     Route::get('comments/{postNum}/{page}', 'Article\CommentsController@comments_list');
 
 // 대댓글 관련 Route
