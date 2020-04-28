@@ -49,14 +49,16 @@ class LikeController extends Controller
             }
         }
 
-        //좋아요 누를 수 있음
-        if($ck===1){
-            return true;
-        }
         //좋아요 누를 수 없음
-        else{
-            return false;
+        if($ck===1){
+            $data = array('key'=>false);
         }
+        //좋아요 누를 수 있음
+        else{
+            $data = array('key'=>true);
+        }
+return json_encode($data,JSON_UNESCAPED_UNICODE);
+
     }
 
 //글 좋아요 클릭(+1) 클릭된것을 한번더 누르면 -1
