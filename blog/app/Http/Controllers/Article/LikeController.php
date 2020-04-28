@@ -121,7 +121,31 @@ class LikeController extends Controller
         }
         //좋아요 취소
         else{
+            //좋아요 1감소
+            DB::table('posts')
+                ->where('indexPosts', $num)
+                ->update(['likeIt' => $content[0]->likeIt-1]);
 
+            // 해당 게시글 좋아요 누른 유저 정보 가져오기
+            $users = $this->get_user_list($num);
+
+            // JSON Object -> PHP Array(True) 또는 Object(False or 없음) 변환
+            $idList =  json_decode($users[0]->likedPeople,true);
+
+            // 유저 정보가 포함되어있는지 확인
+            for($i=0;$i< count($idList["ID"]);$i++){
+                if($id===$idList["ID"][$i]["user"]){
+                    array_splice ($idList["ID"], $i,1);
+                    break;
+                }
+            }
+
+                // 유저아이디 배열로 변환 JSON Object -> PHP Array(True) 또는 Object(False or 없음) 변환
+                $userArr = json_encode($idList);
+
+                $ck = DB::table('post_like')
+                    ->where('postNum', $num)
+                    ->update(['likedPeople'=>$userArr]);
         }
 
         // 좋아요개수 반납
