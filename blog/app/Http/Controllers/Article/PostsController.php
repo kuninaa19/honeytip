@@ -97,15 +97,20 @@ class PostsController extends Controller
 
     //글 상세페이지 하단 글 추천 목록( 6개 랜덤)
     public function recommend_list($postNum){
-            $randomUser = DB::table('posts')
+        $randomList = DB::table('posts')
             ->leftJoin('comments', 'posts.indexPosts', '=', 'comments.postNum')
             ->select('posts.indexPosts', 'posts.image', 'posts.subTitle','posts.title','likeIt',DB::raw('count(comments.postNum) as commentsCount'))
             ->groupBy('posts.indexPosts')
-                ->where('posts.indexPosts', '!=', $postNum)
-                ->inRandomOrder()->limit(6)
-                ->get();
+            ->where('posts.indexPosts', '!=', $postNum)
+            ->inRandomOrder()->limit(6)
+            ->get();
 
-            return $randomUser;
+            $data = array(
+                'key'=>true,
+                'recommendList'=> $randomList
+            );
+
+        return json_encode($data,JSON_UNESCAPED_UNICODE);
     }
 
     //메인페이지 최신 글 6개 보내주기
