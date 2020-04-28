@@ -62,8 +62,11 @@ class PostsController extends Controller
 
     //글 리스트 목록 (페이징)
     public function category_list($category,$num){
-        $content = DB::table('posts')->where('category', $category)
-            ->select('indexPosts','title','likeIt','subTitle','category','date','likeIt','image')
+        $content = DB::table('posts')
+            ->leftJoin('comments', 'posts.indexPosts', '=', 'comments.postNum')
+            ->select('posts.indexPosts','posts.title','posts.likeIt','posts.subTitle','posts.category','posts.date','posts.likeIt','posts.image',DB::raw('count(comments.postNum) as commentsCount'))
+            ->groupBy('posts.indexPosts')
+            ->where('posts.category', $category)
             ->orderBy('indexPosts', 'desc')->offset(($num-1)*6)->limit(6)->get();
 
         $rankingContent = $this->popularity_ranking($category);
