@@ -54,6 +54,7 @@ class PostsController extends Controller
             ->groupBy('posts.indexPosts')
             ->where('posts.category', $category)
             ->orderBy('likeIt', 'desc')
+            ->orderBy('posts.indexPosts', 'desc')
             ->limit(6)
             ->get();
 
