@@ -1,7 +1,7 @@
 <?php
-// comments_list() 댓글 리스트 목록 (페이징)
-// index()  댓글 리스트 전체목록(관리자페이지)
+// comments_list() 댓글 리스트 (페이징)
 // store() 댓글 DB저장
+// show()  댓글 리스트 (관리자페이지) (페이징)
 // edit () 댓글 수정하기위한 작성된 댓글 내용가져오기
 // update() 댓글 수정
 // destroy() 댓글 삭제
@@ -22,7 +22,7 @@ class CommentsController extends Controller
 //        $this->middleware('auth')->except('comments_list');
     }
 
-    // 댓글 리스트 목록 (페이징)
+    // 댓글 리스트 (페이징)
     // 파라미터 글 번호 , 댓글 페이징 번호
     public function comments_list($postNum,$page)
     {
@@ -74,29 +74,6 @@ class CommentsController extends Controller
 //      return response()->json($data);
     }
 
-    // 댓글 리스트 전체목록(관리자페이지)
-    public function index()
-    {
-        $content = DB::table('comments')
-            ->select('userName','category','date','indexComments','comment','postNum')
-            ->orderBy('indexComments', 'desc')
-            ->get();
-
-        if (empty($content[0])) {
-            $data = array(
-                'key' => false
-            );
-        } else {
-            $data = array(
-                'key' => true,
-                'contents' => $content,
-            );
-        }
-
-        return json_encode($data,JSON_UNESCAPED_UNICODE);
-//      return response()->json($data);
-    }
-
     // 댓글 DB저장하기
     public function store(Request $request)
     {
@@ -136,6 +113,32 @@ class CommentsController extends Controller
         }
         return json_encode($data,JSON_UNESCAPED_UNICODE);
     }
+
+    // 관리자 댓글 관리 리스트 (페이징)
+    public function show($id){
+        $content = DB::table('comments')
+            ->select('userName','category','date','indexComments','comment','postNum')
+            ->orderBy('indexComments', 'desc')
+            ->offset(($id-1)*6)->limit(6)
+            ->get();
+
+        //페이지네이션 페이지마다 최소요구개수를 충족하는지 판단
+        if (count($content)<1) {
+            $data = array(
+                'key' => false
+            );
+            return json_encode($data,JSON_UNESCAPED_UNICODE);
+        }
+
+        $data = array(
+            'key' => true,
+            'contents' => $content
+        );
+
+        return json_encode($data,JSON_UNESCAPED_UNICODE);
+//      return response()->json($data);
+    }
+
 
     // 댓글 수정하기위한 작성된 댓글 내용가져오기
     public function edit($id)
