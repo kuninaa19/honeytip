@@ -37,6 +37,10 @@ class LikeController extends Controller
         // 해당 게시글 좋아요 누른 유저 정보 가져오기
         $users = $this->get_user_list($postNum);
 
+        if($users[0]->likedPeople===null){
+            $data = array('key'=>"possible");
+            return json_encode($data,JSON_UNESCAPED_UNICODE);
+        }
         // JSON Object -> PHP Array(True) 또는 Object(False or 없음) 변환
         $idList =  json_decode($users[0]->likedPeople);
 
@@ -49,15 +53,15 @@ class LikeController extends Controller
             }
         }
 
-        //좋아요 누를 수 없음
+        //좋아요 취소
         if($ck===1){
-            $data = array('key'=>false);
+            $data = array('key'=>"cancel");
         }
         //좋아요 누를 수 있음
         else{
-            $data = array('key'=>true);
+            $data = array('key'=>"possible");
         }
-return json_encode($data,JSON_UNESCAPED_UNICODE);
+        return json_encode($data,JSON_UNESCAPED_UNICODE);
 
     }
 
