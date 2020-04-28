@@ -33,7 +33,11 @@ Route::middleware(['cors'])->group(function(){
 });
 
 //회원 관련 Route
-    Route::resource('user', 'UserInfoController');
+    Route::resource('user', 'UserInfoController',['except' => ['index','create','store','edit','update']]);
+    // 유저 댓글 리스트(페이징)
+    Route::get('user/{id}/comments/list/{num}', 'UserInfoController@comments_list');
+    // 유저 좋아요 리스트(페이징)
+    Route::get('user/{id}/like/list/{num}', 'UserInfoController@like_list');
 
 //글 관련 Route
     Route::resource('posts', 'Article\PostsController',['except' => ['create']]);
