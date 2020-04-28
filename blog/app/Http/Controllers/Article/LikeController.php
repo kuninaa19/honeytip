@@ -79,7 +79,7 @@ class LikeController extends Controller
             ->get();
 
         // 좋아요 클릭
-        if($value===true){
+        if($value==="possible"){
             //좋아요 1증가
             DB::table('posts')
                 ->where('indexPosts', $num)
