@@ -3,6 +3,7 @@
 // popularity_ranking() 카테고리별 인기순위 정보
 // category_list() 카테고리별 글 리스트 목록
 // image_store() 글생성 전 이미지 저장
+// recommend_list() 글 상세페이지 하단 글 추천 목록( 6개 랜덤)
 // index() 메인페이지 최신 글 6개 보내주기
 // store() 글 생성
 // show () 글 상세페이지
@@ -94,6 +95,18 @@ class PostsController extends Controller
         return $image_path;
     }
 
+    //글 상세페이지 하단 글 추천 목록( 6개 랜덤)
+    public function recommend_list($postNum){
+            $randomUser = DB::table('posts')
+            ->leftJoin('comments', 'posts.indexPosts', '=', 'comments.postNum')
+            ->select('posts.indexPosts', 'posts.image', 'posts.subTitle','posts.title','likeIt',DB::raw('count(comments.postNum) as commentsCount'))
+            ->groupBy('posts.indexPosts')
+                ->where('posts.indexPosts', '!=', $postNum)
+                ->inRandomOrder()->limit(6)
+                ->get();
+
+            return $randomUser;
+    }
 
     //메인페이지 최신 글 6개 보내주기
     public function index()
