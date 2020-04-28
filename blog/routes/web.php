@@ -44,7 +44,7 @@ Route::middleware(['cors'])->group(function(){
     //카테고리별 글리스트
     Route::get('posts/{category}/{num}', 'Article\PostsController@category_list');
     //글 상세페이지 글 추천 리스트
-    Route::get('posts/recommendation/list/{num}', 'Article\PostsController@recommand_list');
+    Route::get('posts/recommendation/list/{num}', 'Article\PostsController@recommend_list');
 
 //좋아요 관련 Route
     Route::resource('like', 'Article\LikeController',['except' => ['index','create','show','update','destroy']]);
