@@ -50,11 +50,9 @@ Route::middleware(['cors'])->group(function(){
     Route::get('like/{postNum}/{id}', 'Article\LikeController@like_check');
 
 // 댓글 관련 Route
-    Route::resource('comments', 'Article\CommentsController',['except' => ['index','create','show']]);
+    Route::resource('comments', 'Article\CommentsController',['except' => ['index','create']]);
     // 댓글 리스트 (페이징)
     Route::get('comments/{postNum}/{page}', 'Article\CommentsController@comments_list');
-    // 관리자 댓글 관리 리스트 (페이징)
-    Route::get('comments/admin/{postNum}/{page}', 'Article\CommentsController@admin_comment_management');
 
 // 대댓글 관련 Route
     Route::resource('reply', 'Article\ReplyController',['except' => ['index','create','show']]);
