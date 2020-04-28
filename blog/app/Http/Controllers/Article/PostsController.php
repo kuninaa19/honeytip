@@ -148,7 +148,8 @@ class PostsController extends Controller
         }
         else {
             $data = array(
-                'key'=>true
+                'key'=>true,
+                'postNum'=>$store
             );
         }
         return json_encode($data,JSON_UNESCAPED_UNICODE);
