@@ -1,6 +1,8 @@
 <?php
-// 1. show() 회원정보 메인 페이지
-// 2. destroy() 회원탈퇴
+// comments_list() 유저 댓글 리스트(페이징)
+// like_list() 유저 좋아요 리스트(페이징)
+// show() 회원정보 메인 페이지
+// destroy() 회원탈퇴
 
 namespace App\Http\Controllers;
 
@@ -16,22 +18,42 @@ class UserInfoController extends Controller
 //        $this->middleware('auth')->except('comments_list');
     }
 
-    public function index()
-    {
-        //
+    //유저 댓글 리스트(페이징)
+    public function comments_list($id, $num){
+        $content = DB::table('comments')
+            ->select('userName','category','date','indexComments','comment','postNum')
+            ->orderBy('indexComments', 'desc')
+            ->where(['uid'=>$id])
+            ->offset(($num-1)*6)->limit(6)
+            ->get();
+
+        $count = DB::table('comments')->where(['uid'=>$id])->count();
+
+        // 하단 페이지네이션
+        $pageCount = ceil(($count/6));
+
+        //페이지네이션 페이지마다 최소요구개수를 충족하는지 판단
+        if (count($content)<1) {
+            $data = array(
+                'key' => false,
+                'pageCount'=>$pageCount
+            );
+            return json_encode($data,JSON_UNESCAPED_UNICODE);
+        }
+
+        $data = array(
+            'key' => true,
+            'contents' => $content,
+            'pageCount'=>$pageCount
+        );
+
+        return json_encode($data,JSON_UNESCAPED_UNICODE);
     }
 
-    public function create()
-    {
-        //
+    //유저 좋아요 리스트(페이징)
+    public function like_list($id, $num){
+
     }
-
-
-    public function store(Request $request)
-    {
-        //
-    }
-
 
     // 회원정보 메인페이지
     public function show($id)
@@ -54,25 +76,11 @@ class UserInfoController extends Controller
         else{
             $data = array(
                 'key'=>false
-        );
+            );
         }
 
         return json_encode($data,JSON_UNESCAPED_UNICODE);
-//     return response()->json($data);
     }
-
-
-    public function edit($id)
-    {
-        //
-    }
-
-
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
 
     //회원탈퇴
     public function destroy($id)
