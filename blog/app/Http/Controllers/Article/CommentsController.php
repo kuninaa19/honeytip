@@ -122,17 +122,22 @@ class CommentsController extends Controller
             ->offset(($id-1)*6)->limit(6)
             ->get();
 
+        // 하단 페이지네이션
+        $pageCount = ceil((count(DB::table('comments')->select('indexComments')->get())/6));
+
         //페이지네이션 페이지마다 최소요구개수를 충족하는지 판단
         if (count($content)<1) {
             $data = array(
-                'key' => false
+                'key' => false,
+                'pageCount'=>$pageCount
             );
             return json_encode($data,JSON_UNESCAPED_UNICODE);
         }
 
         $data = array(
             'key' => true,
-            'contents' => $content
+            'contents' => $content,
+            'pageCount'=>$pageCount
         );
 
         return json_encode($data,JSON_UNESCAPED_UNICODE);
