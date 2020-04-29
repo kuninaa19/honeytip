@@ -1,5 +1,6 @@
 <?php
 // get_user_list() 해당 게시글 좋아요 누른 유저 정보 가져오기 [method]
+// user_like() 유저 좋아요 리스트에 추가/삭제 [method]
 // like_check() 유저가 보고있는 글에 유저 좋아요를 했는지 안했는지 확인
 // store() 좋아요 증가
 
@@ -26,6 +27,57 @@ class LikeController extends Controller
             ->get();
 
         return $user;
+    }
+
+    //유저 좋아요 리스트에 추가/삭제 [method]
+    public function user_like($id,$postNum,$value){
+        $likeList= DB::table('users')
+            ->select('user_like')
+            ->where('uid', $id)
+            ->get();
+
+        $userLike = $likeList[0]->user_like;
+
+        // 좋아요 클릭인지 확인
+        if($value==='possible'){
+            // 만약 유저 좋아요가 0개라면
+            if(empty($user_like)){
+                $userLike= $postNum;
+
+                $check= DB::table('users')
+                    ->where('uid', $id)
+                    ->update(['user_like'=>$userLike]);
+
+                return $check;
+            }
+            else{
+                $userLike= $userLike.','.$postNum;
+
+                $check= DB::table('users')
+                    ->where('uid', $id)
+                    ->update(['user_like'=>$userLike]);
+
+                return $check;
+            }
+        }
+        else if($value==='cancel'){
+            $likeArr = explode(',', $userLike);
+
+            for($i=0;$i<count($likeArr);$i++){
+                if($likeArr[$i] === $userLike){
+                    unset($likeArr[$i]);
+                    break;
+                }
+            }
+            $likeStr = implode( ',', $likeArr );
+
+            $check= DB::table('users')
+                ->where('uid', $id)
+                ->update(['user_like'=>$likeStr]);
+
+            return $check;
+
+        }
     }
     //유저가 보고있는 글에 유저 좋아요를 했는지 안했는지 확인
     public function like_check($postNum,$id){
@@ -75,15 +127,18 @@ class LikeController extends Controller
         $content = DB::table('posts')
             ->select('likeIt')
             ->where('indexPosts',$num)
-            ->lockForUpdate()
             ->get();
+
+        return $aa = $this->user_like($id,$num,$value);
 
         // 좋아요 클릭
         if($value==="possible"){
             //좋아요 1증가
-            DB::table('posts')
-                ->where('indexPosts', $num)
-                ->update(['likeIt' => $content[0]->likeIt+1]);
+//            DB::table('posts')
+//                ->where('indexPosts', $num)
+//                ->update(['likeIt' => $content[0]->likeIt+1]);
+
+
 
             //해당 게시글 좋아요 첫 유저
             if($content[0]->likeIt===0){
@@ -149,7 +204,7 @@ class LikeController extends Controller
                 // 유저아이디 배열로 변환 JSON Object -> PHP Array(True) 또는 Object(False or 없음) 변환
                 $userArr = json_encode($idList);
 
-                $ck = DB::table('post_like')
+                DB::table('post_like')
                     ->where('postNum', $num)
                     ->update(['likedPeople'=>$userArr]);
         }
