@@ -44,7 +44,7 @@ class LikeController extends Controller
         // 좋아요 클릭인지 확인
         if ($value === 'possible') {
             // 만약 유저 좋아요가 0개라면
-            if (empty($user_like)) {
+            if (empty($userLike)) {
                 $userLike = $postNum;
 
                 DB::table('users')
@@ -129,10 +129,9 @@ class LikeController extends Controller
         // 좋아요 클릭
         if ($value === "possible") {
             //좋아요 1증가
-//            DB::table('posts')
-//                ->where('indexPosts', $num)
-//                ->update(['likeIt' => $content[0]->likeIt+1]);
-
+            DB::table('posts')
+                ->where('indexPosts', $num)
+                ->update(['likeIt' => $content[0]->likeIt+1]);
 
             //해당 게시글 좋아요 첫 유저
             if ($content[0]->likeIt === 0) {
@@ -142,7 +141,7 @@ class LikeController extends Controller
                 // 유저아이디 배열로 변환 JSON Object -> PHP Array(True) 또는 Object(False or 없음) 변환
                 $userArr = json_decode($userName, true);
 
-                $ck = DB::table('post_like')
+                 DB::table('post_like')
                     ->where('postNum', $num)
                     ->update(['likedPeople' => $userArr]);
             } else {
@@ -164,16 +163,12 @@ class LikeController extends Controller
                 //기존유저배열에 추가
                 array_push($idList["ID"], $userArr);
 
-
-                $ck = DB::table('post_like')
+                DB::table('post_like')
                     ->where('postNum', $num)
                     ->update(['likedPeople' => $idList]);
             }
-            $data = array('key' => $ck);
-
-            return json_encode($data, JSON_UNESCAPED_UNICODE);
         } //좋아요 취소
-        else {
+        else if ($value === "cancel"){
             //좋아요 1감소
             DB::table('posts')
                 ->where('indexPosts', $num)
