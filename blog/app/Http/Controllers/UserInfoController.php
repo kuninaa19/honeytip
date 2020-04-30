@@ -85,7 +85,7 @@ class UserInfoController extends Controller
                 ->get();
 
             $data = array(
-                'key' => false,
+                'key' => true,
                 'contents' => $content,
                 'pageCount' => $pageCount
             );
