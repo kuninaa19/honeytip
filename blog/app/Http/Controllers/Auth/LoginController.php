@@ -31,7 +31,7 @@ class LoginController extends Controller
 //      로그인
         Auth::login($user, false);
 
-        return redirect()->away(env('LOGIN_ENDPOINT').'/?cf='.$socialUser->id);
+        return redirect()->away(env('LOGIN_ENDPOINT').'/?cf='.$socialUser->id.'#');
     }
 
     // 아이디 존재하지않으면 새로 생성 하는 메서드
