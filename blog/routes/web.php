@@ -3,14 +3,14 @@
 use Illuminate\Support\Facades\Route;
 
 //auth미들웨어를 사용해야 로그인
-Route::middleware(['auth'])->group(function() {
-
-//    Route::get('/', 'Controller@index');
-    //소셜로그아웃기능s
-    Route::get('/hi', 'exampleController@store');
-
-    Route::post('/example', 'exampleController@store');
-});
+//Route::middleware(['auth'])->group(function() {
+//
+////    Route::get('/', 'Controller@index');
+//    //소셜로그아웃기능s
+//    Route::get('/hi', 'exampleController@store');
+//
+//    Route::post('/example', 'exampleController@store');
+//});
 
 Route::get('/', 'Controller@index');
 
