@@ -237,9 +237,8 @@ class PostsController extends Controller
         $contents = $request->input('contents');
         $image = $request->input('image');
 
-        if($image===false){
+        if($image==="false"){
             DB::table('posts')->where('indexPosts', $id)->update(['contents' => $contents, 'subTitle' => $subTitle, 'category'=> $category,'title'=>$title]);
-
         }
         else{
             DB::table('posts')->where('indexPosts', $id)->update(['image' => 'https://honeytip.p-e.kr/storage/'.$image,
