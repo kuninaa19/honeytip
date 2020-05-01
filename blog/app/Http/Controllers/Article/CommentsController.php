@@ -190,7 +190,7 @@ class CommentsController extends Controller
             return json_encode($data,JSON_UNESCAPED_UNICODE);
         }
 
-        DB::table('comments')->where('indexComments', $id)->delete();
+        DB::table('comments')->where('groupNum',$id)->delete();
 
         $data = array(
             'key'=>true
