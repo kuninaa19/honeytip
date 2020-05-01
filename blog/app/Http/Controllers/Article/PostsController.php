@@ -38,9 +38,13 @@ class PostsController extends Controller
                 'key' => false
             );
         } else {
+
+            $postCount = DB::table('posts')->count();
+
             $data = array(
                 'key' => true,
                 'contents' => $content,
+                'postCount'=>$postCount
             );
         }
         return json_encode($data,JSON_UNESCAPED_UNICODE);
