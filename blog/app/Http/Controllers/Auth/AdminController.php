@@ -1,4 +1,5 @@
 <?php
+// 사용X
 // 1. store_secret() 관리자 아이디 생성
 // 2. login () 관리자 로그인인증
 
@@ -54,6 +55,5 @@ class AdminController extends Controller
                 return json_encode($data, JSON_UNESCAPED_UNICODE);
             }
         }
-//      return response()->json($data);
     }
 }

@@ -120,8 +120,6 @@ class PostsController extends Controller
     //메인페이지 최신 글 6개 보내주기
     public function index()
     {
-//     $post = DB::table('posts')->orderBy('indexPosts', 'desc')->limit(6)->get();
-
         $post = DB::table('posts')
             ->leftJoin('comments', 'posts.indexPosts', '=', 'comments.postNum')
             ->select('posts.indexPosts', 'posts.image', 'posts.subTitle','posts.title','likeIt',DB::raw('count(comments.postNum) as commentsCount'))
@@ -142,7 +140,6 @@ class PostsController extends Controller
         }
 
         return json_encode($data,JSON_UNESCAPED_UNICODE);
-//     return response()->json($data);
     }
 
     //글 DB저장(관리자)
@@ -189,8 +186,6 @@ class PostsController extends Controller
             ->orderBy('indexPosts', 'desc')
             ->first();
 
-//      $post = DB::table('posts')->where('indexPosts', $id)->first();
-
         $data = array(
             'key'=>false,
         );
@@ -204,7 +199,6 @@ class PostsController extends Controller
         }
 
         return json_encode($data,JSON_UNESCAPED_UNICODE);
-//      return response()->json($data);
     }
 
     //수정하려는 글에 대한 정보 전달

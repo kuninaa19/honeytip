@@ -47,16 +47,6 @@ class LoginController extends Controller
                     ->update(['access_token' => $socialUser->token]);
             }
 
-//            if($socialUser->refreshToken===null){
-//                User::where('uid', $existUser->uid)
-//                    ->update(['name' => $socialUser->getName()],['avatar' =>$socialUser->getAvatar()]);
-//            }
-//            else{
-//                User::where('uid', $existUser->uid)
-////                    ->update(['refresh_token'=> $socialUser->refreshToken]);
-//                    ->update(['name' => $socialUser->getName()],['avatar' =>$socialUser->getAvatar()],['refresh_token'=> $socialUser->refreshToken]);
-//            }
-
             // 그전꺼로 로그인 되어있는 정보로 로그인해야함
             return $existUser;
         }

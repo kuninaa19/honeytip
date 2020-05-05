@@ -2,35 +2,21 @@
 
 use Illuminate\Support\Facades\Route;
 
-//auth미들웨어를 사용해야 로그인
-//Route::middleware(['auth'])->group(function() {
-//
-////    Route::get('/', 'Controller@index');
-//    //소셜로그아웃기능s
-//    Route::get('/hi', 'exampleController@store');
-//
-//    Route::post('/example', 'exampleController@store');
-//});
-
 Route::get('/', 'Controller@index');
 
-//소셜 로그인
-Route::get('/login', function () {
-    return view('auth/login');
-})->name('login');
+////관리자로그인 관리자 아이디 생성
+//Route::middleware(['cors'])->group(function(){
+//    Route::get('/csrf_token', function(){
+//        return csrf_token();
+//    });
+//    Route::post('make_id','Auth\AdminController@store_secret');
+//    Route::post('login','Auth\AdminController@login');
+//});
 
-// 구글 소셜로그인
+// 소셜로그인
 Route::get('auth/social/{social}', 'Auth\LoginController@redirectToProvider');
 Route::get('/{social}/callback', 'Auth\LoginController@handleProviderCallback');
 
-//관리자로그인 관리자 아이디 생성
-Route::middleware(['cors'])->group(function(){
-    Route::get('/csrf_token', function(){
-        return csrf_token();
-    });
-    Route::post('make_id','Auth\AdminController@store_secret');
-    Route::post('login','Auth\AdminController@login');
-});
 
 //회원 관련 Route
     Route::resource('user', 'UserInfoController',['except' => ['index','create','store','edit','update']]);

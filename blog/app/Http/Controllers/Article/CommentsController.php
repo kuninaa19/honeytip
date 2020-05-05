@@ -28,8 +28,6 @@ class CommentsController extends Controller
     {
         $contentCount = DB::table('comments')
             ->where(['postNum'=> $postNum,'class'=> 0])->count();
-//            ->orderBy('indexComments', 'asc')->offset(($page-1)*6)->limit(6)->count();
-
 
         //페이지네이션 페이지마다 최소요구개수를 충족하는지 판단
         if ($contentCount<(($page-1)*6+1)) {
@@ -45,14 +43,11 @@ class CommentsController extends Controller
             ->offset(($page-1)*6)->limit(6)
             ->pluck('indexComments');
 
-//        return json_encode($indexNums,JSON_UNESCAPED_UNICODE);
-
         // 페이지네이션번호마다 포함되는 대댓글 개수파악
         $replyCount = DB::table('comments')
             ->where(['postNum'=> $postNum,'class'=> 1])
             ->whereIn('groupNum',$indexNums)
             ->pluck('indexComments');
-//            ->count();
 
         //배열 합치기
         $array =Arr::collapse([$indexNums, $replyCount]);
@@ -63,7 +58,6 @@ class CommentsController extends Controller
             ->orderBy('indexComments','asc')
             ->orderBy('order','asc')
             ->get();
-//            ->offset(($page-1)*6)->limit(6)->get();
 
         $data = array(
                 'key' => true,
@@ -71,7 +65,6 @@ class CommentsController extends Controller
             );
 
         return json_encode($data,JSON_UNESCAPED_UNICODE);
-//      return response()->json($data);
     }
 
     // 댓글 DB저장하기
@@ -141,9 +134,7 @@ class CommentsController extends Controller
         );
 
         return json_encode($data,JSON_UNESCAPED_UNICODE);
-//      return response()->json($data);
     }
-
 
     // 댓글 수정하기위한 작성된 댓글 내용가져오기
     public function edit($id)
