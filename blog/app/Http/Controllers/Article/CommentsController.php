@@ -72,7 +72,6 @@ class CommentsController extends Controller
     {
         $name = $request->input('userName');
         $comment = $request->input('comment');
-        $category = $request->input('category');
         $postNum = $request->input('postNum');
         $uid = $request->input('uid');
 
@@ -86,7 +85,7 @@ class CommentsController extends Controller
         }
 
         $store = DB::table('comments')->insertGetId(['userName' => $name, 'comment' => $comment,
-            'postNum' => $postNum, 'uid'=>$uid, 'category'=> $category, 'date'=>NOW()]);
+            'postNum' => $postNum, 'uid'=>$uid, 'date'=>NOW()]);
 
         DB::table('comments')->where('indexComments', $store)->update(['groupNum'=>$store]);
 
@@ -110,7 +109,7 @@ class CommentsController extends Controller
     // 관리자 댓글 관리 리스트 (페이징)
     public function show($id){
         $content = DB::table('comments')
-            ->select('userName','category','date','indexComments','comment','postNum')
+            ->select('userName','date','indexComments','comment','postNum')
             ->orderBy('indexComments', 'desc')
             ->offset(($id-1)*6)->limit(6)
             ->get();
