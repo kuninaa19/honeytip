@@ -1,4 +1,5 @@
 <?php
+//comments_count() 게시글 댓글 개수(삭제 수정 삭제시 처리)
 // post_list() 카테고리별 글 리스트 전체목록(관리자페이지)
 // popularity_ranking() 카테고리별 인기순위 정보
 // category_list() 카테고리별 글 리스트 목록
@@ -26,6 +27,16 @@ class PostsController extends Controller
         $this->middleware('cors');
 //        $this->middleware('auth')->only('store','edit','update','destroy');
 //        $this->middleware('auth')->except('index','category_list','viewUp','show');
+    }
+
+    public function comments_count($postNum){
+        $count= DB::table('comments')->where(['postNum'=>$postNum,'class'=>0])->count();
+
+        $data = array(
+            'commentsCount'=>$count
+        );
+
+        return json_encode($data,JSON_UNESCAPED_UNICODE);
     }
 
     // 카테고리별 글 리스트 전체목록(관리자페이지)

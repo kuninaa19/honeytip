@@ -35,6 +35,8 @@ Route::get('/{social}/callback', 'Auth\LoginController@handleProviderCallback');
     Route::get('posts/{category}/{num}', 'Article\PostsController@category_list');
     //글 상세페이지 글 추천 리스트
     Route::get('posts/recommendation/list/{num}', 'Article\PostsController@recommend_list');
+    // 댓글 개수 확인
+    Route::get('posts/comments/{postNum}/count', 'Article\PostsController@comments_count');
 
 //좋아요 관련 Route
     Route::resource('like', 'Article\LikeController',['except' => ['index','create','show','update','destroy']]);
@@ -45,6 +47,7 @@ Route::get('/{social}/callback', 'Auth\LoginController@handleProviderCallback');
     Route::resource('comments', 'Article\CommentsController',['except' => ['index','create']]);
     // 댓글 리스트 (페이징)
     Route::get('comments/{postNum}/{page}', 'Article\CommentsController@comments_list');
+
 
 // 대댓글 관련 Route
     Route::resource('reply', 'Article\ReplyController',['except' => ['index','create','show']]);
