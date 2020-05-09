@@ -54,12 +54,10 @@ class PostsController extends Controller
     //카테고리별 인기순위 정보 [category_list 연관]
     public function popularity_ranking($category){
         $content = DB::table('posts')
-            ->leftJoin('comments', 'posts.category', '=', 'comments.category')
-            ->select('posts.indexPosts','posts.title','posts.likeIt','posts.subTitle','posts.category',DB::raw('count(comments.postNum) as commentsCount'))
-            ->groupBy('posts.indexPosts')
-            ->where('posts.category', $category)
+            ->select('indexPosts','title','likeIt','subTitle','category')
+            ->where('category', $category)
             ->orderBy('likeIt', 'desc')
-            ->orderBy('posts.indexPosts', 'desc')
+            ->orderBy('indexPosts', 'desc')
             ->limit(6)
             ->get();
 
