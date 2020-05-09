@@ -22,7 +22,7 @@ class UserInfoController extends Controller
     public function comments_list($id, $page)
     {
         $content = DB::table('comments')
-            ->select('userName', 'category', 'date', 'indexComments', 'comment', 'postNum')
+            ->select('userName', 'date', 'indexComments', 'comment', 'postNum')
             ->orderBy('indexComments', 'desc')
             ->where(['uid' => $id])
             ->offset(($page - 1) * 6)->limit(6)
