@@ -21,7 +21,6 @@ class LoginController extends Controller
 // 2. handleProviderCallback () 로그인한 후에 이미 만들어진 아이디인지 확인후 처리
     public function handleProviderCallback($social)
     {
-        //아이디 생성 그런느낌인거같음.
         $socialUser = Socialite::driver($social)->stateless()->user();
 //        $socialUser = Socialite::driver('google')->user();
 
@@ -64,7 +63,7 @@ class LoginController extends Controller
                 'name'  => $nickname,
                 'uid'  => $socialUser->getId(),
                 'email' => $socialUser->getEmail(),
-                'avatar' =>$socialUser->getAvatar(),
+                'avatar' =>"https://honeytip.p-e.kr/storage/images/uWpfEboAFHO1XWGNaysV1iZVL0cxPFHYHPvac4Op.png",
                 'sns_type'=>$social,
                 'access_token'=>$socialUser->token,
                 'refresh_token'=> $socialUser->refreshToken
