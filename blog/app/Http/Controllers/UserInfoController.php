@@ -106,7 +106,7 @@ class UserInfoController extends Controller
     public function show($id)
     {
         $user = DB::table('users')->where('uid', $id)
-            ->select('name', 'avatar', 'badge')
+            ->select('name', 'avatar')
             ->first();
 
         //DB검색해서 가져온 값이 존재하는지 확인
