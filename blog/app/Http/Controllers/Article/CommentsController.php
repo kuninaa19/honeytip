@@ -52,11 +52,14 @@ class CommentsController extends Controller
         //배열 합치기
         $array =Arr::collapse([$indexNums, $replyCount]);
 
-        $content = DB::table('comments')->where('postNum', $postNum)
-            ->whereIn('groupNum',$array)
-            ->orderBy('groupNum','asc')
-            ->orderBy('indexComments','asc')
-            ->orderBy('order','asc')
+        $content = DB::table('comments')
+            ->leftJoin('users', 'comments.uid', '=', 'users.uid')
+            ->select( 'comments.*','users.avatar')
+            ->where('comments.postNum', $postNum)
+            ->whereIn('comments.groupNum',$array)
+            ->orderBy('comments.groupNum','asc')
+            ->orderBy('comments.indexComments','asc')
+            ->orderBy('comments.order','asc')
             ->get();
 
         $data = array(
